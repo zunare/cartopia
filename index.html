@@ -260,9 +260,9 @@
   .callout p{margin:0; font-weight:600;}
   .callout span{color:var(--ink-soft); font-weight:400;}
 
-  .vendor-strip{display:flex; gap:var(--sp-4); overflow-x:auto; padding-bottom:var(--sp-2); scrollbar-width:thin;}
+  .vendor-strip{display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:var(--sp-4);}
   .vendor-chip{
-    flex:none; width:220px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md);
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md);
     padding:var(--sp-4); cursor:pointer; text-align:left; box-shadow:var(--shadow-card);
     transition:border-color .15s ease, transform .12s ease;
   }
@@ -271,6 +271,27 @@
   .vendor-chip .vregion{font-size:.8rem; color:var(--ink-faint); margin-bottom:var(--sp-3);}
   .vendor-chip .vstats{display:flex; gap:var(--sp-3); font-family:var(--font-mono); font-size:.78rem;}
   .vendor-chip .vstats b{color:var(--accent-strong); font-weight:600;}
+
+  .vendor-header{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md);
+    padding:var(--sp-5); margin-bottom:var(--sp-5); box-shadow:var(--shadow-card);
+  }
+  .vh-back{
+    background:none; border:none; padding:0; margin-bottom:var(--sp-4); cursor:pointer;
+    color:var(--ink-soft); font-size:.85rem; font-weight:600;
+  }
+  .vh-back:hover{color:var(--ink);}
+  .vh-main{display:flex; align-items:center; gap:var(--sp-4); flex-wrap:wrap;}
+  .vh-avatar{
+    flex:none; width:56px; height:56px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(155deg, var(--accent), var(--accent-strong)); color:var(--on-accent);
+    font-family:var(--font-display); font-weight:800; font-size:1.4rem;
+  }
+  .vh-info{flex:1 1 200px; min-width:0;}
+  .vh-name{font-family:var(--font-display); font-weight:800; font-size:1.4rem; line-height:1.15;}
+  .vh-meta{display:flex; gap:var(--sp-3); flex-wrap:wrap; color:var(--ink-faint); font-size:.85rem; margin-top:4px;}
+  .vh-actions{display:flex; align-items:center; gap:var(--sp-3); flex-wrap:wrap;}
 
   .toolbar{
     display:flex; flex-wrap:wrap; gap:var(--sp-3); align-items:center;
@@ -296,13 +317,6 @@
   }
   .chip:hover{border-color:var(--ink-faint);}
   .chip.active{background:var(--ink); color:var(--paper); border-color:var(--ink);}
-  .vendor-filter-note{
-    display:flex; align-items:center; gap:8px; font-size:.85rem; color:var(--ink-soft);
-    background:var(--gold-soft); border:1px solid color-mix(in srgb, var(--gold) 45%, var(--border));
-    padding:8px 14px; border-radius:var(--radius-sm); margin-bottom:var(--sp-4);
-  }
-  .vendor-filter-note button{background:none; border:none; color:var(--accent-strong); font-weight:700; cursor:pointer; padding:0; font-size:.85rem;}
-
   .count-row{display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--sp-4); color:var(--ink-faint); font-size:.85rem; font-family:var(--font-mono);}
   .grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(216px, 1fr)); gap:var(--sp-4);}
 
@@ -463,6 +477,7 @@
     </button>
     <nav class="navlinks">
       <a id="navMarket">Marketplace</a>
+      <a id="navVendors">Vendedores</a>
       <a id="navHow">Cómo funciona</a>
       <a id="navSell">Vender</a>
     </nav>
@@ -520,6 +535,7 @@
         <div>
           <span class="eyebrow">Catálogos activos</span>
           <h2>Vendedores en Cartopia</h2>
+          <p>Todos los vendedores registrados en la plataforma. Entra al catálogo de cualquiera para ver solo sus cartas.</p>
         </div>
       </div>
       <div class="vendor-strip" id="vendorStrip"></div>
@@ -528,11 +544,29 @@
 
   <section id="marketSection">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head" id="marketSectionHead">
         <div>
           <span class="eyebrow">Publicaciones</span>
           <h2>Últimas cartas publicadas</h2>
           <p>De todos los catálogos activos, coordina la compra directo con el vendedor por WhatsApp.</p>
+        </div>
+      </div>
+
+      <div id="vendorHeaderCard" class="vendor-header" style="display:none;">
+        <button type="button" id="clearVendorFilter" class="vh-back">← Ver todos los vendedores</button>
+        <div class="vh-main">
+          <div class="vh-avatar" id="vhAvatar"></div>
+          <div class="vh-info">
+            <div class="vh-name" id="vhName"></div>
+            <div class="vh-meta">
+              <span id="vhRegion"></span>
+              <span id="vhCount"></span>
+            </div>
+          </div>
+          <div class="vh-actions">
+            <a id="vhInstagram" class="btn btn-ghost" style="display:none;" target="_blank" rel="noopener">Instagram</a>
+            <button id="vhWhatsapp" class="btn btn-primary" type="button">Escribir por WhatsApp</button>
+          </div>
         </div>
       </div>
 
@@ -549,10 +583,6 @@
         </select>
       </div>
       <div class="chiprow" id="sportChips" style="margin-bottom:var(--sp-4);"></div>
-      <div id="vendorFilterNote" class="vendor-filter-note" style="display:none;">
-        <span>Mostrando solo publicaciones de <strong id="vendorFilterName"></strong></span>
-        <button type="button" id="clearVendorFilter">Quitar filtro ✕</button>
-      </div>
       <div class="count-row"><span id="resultCount">0 cartas</span><span id="filterSummary"></span></div>
       <div class="grid" id="marketGrid"></div>
     </div>
@@ -1010,7 +1040,7 @@
       var hasAny = allListings.length > 0;
       grid.innerHTML = '<div class="empty">'+
         '<h3>'+(hasAny ? "No hay cartas con esos filtros" : "Todavía no hay cartas publicadas")+'</h3>'+
-        '<p>'+(hasAny ? "Probá cambiando el deporte, la región o la búsqueda." : "Sé el primer vendedor en publicar tu catálogo de cartas deportivas en Cartopia.")+'</p>'+
+        '<p>'+(hasAny ? "Prueba cambiando el deporte, la región o la búsqueda." : "Sé el primer vendedor en publicar tu catálogo de cartas deportivas en Cartopia.")+'</p>'+
         (hasAny ? '' : '<button class="btn btn-primary" id="emptyCta" type="button">Registrarme como vendedor</button>')+
         '</div>';
       var cta = $("#emptyCta");
@@ -1078,9 +1108,40 @@
   function setVendorFilter(vendorId){
     filters.vendorId = vendorId;
     var v = getVendor(vendorId);
-    var note = $("#vendorFilterNote");
-    if(vendorId && v){ note.style.display = "flex"; $("#vendorFilterName").textContent = v.store; }
-    else { note.style.display = "none"; }
+    var header = $("#vendorHeaderCard");
+    var sectionHead = $("#marketSectionHead");
+    var hideEls = document.querySelectorAll(".hero, #vendorSection, #howSection");
+
+    if(vendorId && v){
+      hideEls.forEach(function(el){ el.style.display = "none"; });
+      sectionHead.style.display = "none";
+      header.style.display = "block";
+
+      var mine = allListings.filter(function(l){ return l.vendor_id === v.id; });
+      var avail = mine.filter(function(l){ return l.status === "disponible"; }).length;
+      $("#vhAvatar").textContent = (v.store || "?").trim().charAt(0).toUpperCase();
+      $("#vhName").textContent = v.store;
+      $("#vhRegion").textContent = v.region;
+      $("#vhCount").textContent = avail + (avail === 1 ? " carta disponible" : " cartas disponibles") + " · " + mine.length + " en total";
+
+      var igBtn = $("#vhInstagram");
+      if(v.instagram){ igBtn.style.display = ""; igBtn.href = "https://www.instagram.com/" + v.instagram; }
+      else { igBtn.style.display = "none"; }
+
+      $("#vhWhatsapp").onclick = function(){
+        var pageUrl = location.href.split("#")[0];
+        var msg = "¡Hola! Vi tu catálogo de " + v.store + " en " + BRAND + " y quería consultarte.\n\n" + pageUrl + "#vendedor-" + v.id;
+        window.open("https://wa.me/" + v.whatsapp + "?text=" + encodeURIComponent(msg), "_blank", "noopener");
+      };
+
+      if(location.hash !== "#vendedor-" + v.id){ history.replaceState(null, "", "#vendedor-" + v.id); }
+    } else {
+      hideEls.forEach(function(el){ el.style.display = ""; });
+      sectionHead.style.display = "";
+      header.style.display = "none";
+      if(location.hash.indexOf("#vendedor-") === 0){ history.replaceState(null, "", location.pathname + location.search); }
+    }
+
     renderGrid();
     document.getElementById("marketSection").scrollIntoView({behavior:"smooth", block:"start"});
   }
@@ -1412,6 +1473,7 @@
   /* ---------- nav wiring ---------- */
   $("#logoBtn").addEventListener("click", function(){ window.scrollTo({top:0, behavior:"smooth"}); });
   $("#navMarket").addEventListener("click", function(){ $("#marketSection").scrollIntoView({behavior:"smooth"}); });
+  $("#navVendors").addEventListener("click", function(){ setVendorFilter(null); $("#vendorSection").scrollIntoView({behavior:"smooth"}); });
   $("#navHow").addEventListener("click", function(){ $("#howSection").scrollIntoView({behavior:"smooth"}); });
   $("#navSell").addEventListener("click", openSellFlow);
   $("#heroExplore").addEventListener("click", function(){ $("#marketSection").scrollIntoView({behavior:"smooth"}); });
@@ -1424,6 +1486,9 @@
     if(h.indexOf("#listing-") === 0){
       var id = h.replace("#listing-", "");
       if(getListing(id)) setTimeout(function(){ openDetail(id); }, 200);
+    } else if(h.indexOf("#vendedor-") === 0){
+      var vid = h.replace("#vendedor-", "");
+      if(getVendor(vid)) setTimeout(function(){ setVendorFilter(vid); }, 200);
     }
   }
 
