@@ -60,6 +60,10 @@
   .brand{display:flex; align-items:center; gap:8px; font-family:var(--font-display); font-weight:900; font-size:1.3rem; text-decoration:none; color:var(--ink);}
   .brand .mark{width:22px; height:22px; border-radius:6px; background:linear-gradient(155deg, var(--accent), var(--accent-strong)); position:relative; flex:none;}
   .brand .mark::after{content:""; position:absolute; inset:4px; border:2px solid var(--on-accent); border-radius:2px; opacity:.75;}
+  .brand-logo{ height:28px; width:auto; display:block; }
+  .logo-for-light{ display:none; }
+  :root[data-theme="light"] .logo-for-dark{ display:none; }
+  :root[data-theme="light"] .logo-for-light{ display:block; }
   .back{font-size:.85rem; font-weight:600; text-decoration:none; color:var(--ink-soft); display:inline-flex; align-items:center; gap:6px;}
   .back:hover{color:var(--ink);}
   .nav-right{display:flex; align-items:center; gap:var(--sp-4);}
@@ -100,7 +104,10 @@
 
 <header class="site">
   <div class="wrap nav">
-    <a class="brand" href="index.html"><span class="mark" aria-hidden="true"></span>Cartopia</a>
+    <a class="brand" href="index.html">
+      <img src="logo-dark.png" alt="Cartopia" class="brand-logo logo-for-dark">
+      <img src="logo-light.png" alt="Cartopia" class="brand-logo logo-for-light">
+    </a>
     <div class="nav-right">
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Cambiar tema"></button>
       <a class="back" href="index.html">← Volver al marketplace</a>
