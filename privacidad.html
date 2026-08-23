@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8" />
+<title>Política de Privacidad — Cartopia</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2F5EF; --surface:#FFFFFF; --surface-2:#E8ECE3; --border:#D6DCCE;
+    --ink:#121A15; --ink-soft:#4C5A4F; --ink-faint:#7B8A7E;
+    --accent:#0E8C86; --accent-strong:#0B7873; --on-accent:#F4FFF8;
+    --gold-soft:#F4E7C8; --gold:#B9821F;
+    --font-display:'Big Shoulders Display', system-ui, sans-serif;
+    --font-body:'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    --font-mono:'IBM Plex Mono', ui-monospace, monospace;
+    --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px; --sp-7:48px;
+    --radius-sm:6px; --radius-md:10px;
+    --shadow-card: 0 1px 2px rgba(18,26,21,.06), 0 8px 24px -12px rgba(18,26,21,.18);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0B120D; --surface:#121B15; --surface-2:#1A251C; --border:#2A392C;
+      --ink:#ECF3E9; --ink-soft:#AEBCA8; --ink-faint:#7C8B7E;
+      --accent:#2FD9CC; --accent-strong:#4EE6DA; --on-accent:#05170D;
+      --gold-soft:#3A2F14; --gold:#F0C568;
+      --shadow-card: 0 1px 2px rgba(0,0,0,.35), 0 12px 30px -14px rgba(0,0,0,.55);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0B120D; --surface:#121B15; --surface-2:#1A251C; --border:#2A392C;
+    --ink:#ECF3E9; --ink-soft:#AEBCA8; --ink-faint:#7C8B7E;
+    --accent:#2FD9CC; --accent-strong:#4EE6DA; --on-accent:#05170D;
+    --gold-soft:#3A2F14; --gold:#F0C568;
+    --shadow-card: 0 1px 2px rgba(0,0,0,.35), 0 12px 30px -14px rgba(0,0,0,.55);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--font-body); line-height:1.6;}
+  a{color:var(--accent-strong);}
+  h1,h2{font-family:var(--font-display); font-weight:800; margin:0; text-wrap:balance;}
+  .wrap{max-width:760px; margin:0 auto; padding:0 var(--sp-5);}
+  @media (max-width:640px){ .wrap{padding:0 var(--sp-4);} }
+
+  header.site{border-bottom:1px solid var(--border); padding:var(--sp-4) 0;}
+  .nav{display:flex; align-items:center; justify-content:space-between; gap:var(--sp-4);}
+  .brand{display:flex; align-items:center; gap:8px; font-family:var(--font-display); font-weight:900; font-size:1.3rem; text-decoration:none; color:var(--ink);}
+  .brand .mark{width:22px; height:22px; border-radius:6px; background:linear-gradient(155deg, var(--accent), var(--accent-strong)); position:relative; flex:none;}
+  .brand .mark::after{content:""; position:absolute; inset:4px; border:2px solid var(--on-accent); border-radius:2px; opacity:.75;}
+  .back{font-size:.85rem; font-weight:600; text-decoration:none; color:var(--ink-soft); display:inline-flex; align-items:center; gap:6px;}
+  .back:hover{color:var(--ink);}
+
+  main{padding:var(--sp-7) 0 var(--sp-6);}
+  .eyebrow{font-family:var(--font-mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent-strong); font-weight:600;}
+  h1{font-size:clamp(2rem, 4vw + 1rem, 2.8rem); margin:var(--sp-3) 0 var(--sp-2);}
+  .updated{color:var(--ink-faint); font-size:.85rem; margin-bottom:var(--sp-6);}
+  .callout{
+    background:var(--gold-soft); border:1px solid color-mix(in srgb, var(--gold) 45%, var(--border));
+    border-radius:var(--radius-md); padding:var(--sp-4) var(--sp-5); margin-bottom:var(--sp-6); font-size:.92rem;
+  }
+  article h2{font-size:1.35rem; margin:var(--sp-6) 0 var(--sp-3);}
+  article p, article li{color:var(--ink-soft); font-size:.98rem;}
+  article ul, article ol{padding-left:1.3em;}
+  article li{margin-bottom:8px;}
+  article strong{color:var(--ink);}
+  article table{width:100%; border-collapse:collapse; margin:var(--sp-4) 0; font-size:.92rem;}
+  article th, article td{text-align:left; padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:top;}
+  article th{color:var(--ink); font-weight:600; font-family:var(--font-mono); font-size:.78rem; text-transform:uppercase; letter-spacing:.04em;}
+  article td{color:var(--ink-soft);}
+
+  footer{border-top:1px solid var(--border); padding:var(--sp-6) 0; color:var(--ink-faint); font-size:.82rem; margin-top:var(--sp-7);}
+  footer .links{display:flex; gap:var(--sp-4); margin-top:8px;}
+  footer a{color:var(--ink-faint); text-decoration:none;}
+  footer a:hover{color:var(--ink-soft);}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap nav">
+    <a class="brand" href="index.html"><span class="mark" aria-hidden="true"></span>Cartopia</a>
+    <a class="back" href="index.html">← Volver al marketplace</a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <span class="eyebrow">Legal</span>
+    <h1>Política de Privacidad</h1>
+    <p class="updated">Última actualización: 23 de agosto de 2026</p>
+
+    <div class="callout">
+      Resumen en una frase: guardamos solo los datos necesarios para que el marketplace funcione (tu cuenta, tu perfil de vendedor y tus publicaciones), y ciertos datos de tu perfil de vendedor son <strong>públicos por diseño</strong> — están ahí para que los compradores te contacten.
+    </div>
+
+    <article>
+      <h2>1. Qué datos recopilamos</h2>
+      <table>
+        <tr><th>Dato</th><th>¿Para qué?</th><th>¿Es público?</th></tr>
+        <tr><td>Correo electrónico</td><td>Crear tu cuenta e iniciar sesión</td><td>No</td></tr>
+        <tr><td>Contraseña</td><td>Iniciar sesión (guardada cifrada por Supabase, nunca la vemos en texto plano)</td><td>No</td></tr>
+        <tr><td>Nombre de tienda / catálogo</td><td>Identificarte como vendedor</td><td>Sí</td></tr>
+        <tr><td>WhatsApp</td><td>Que los compradores te contacten por el botón de WhatsApp</td><td>Sí</td></tr>
+        <tr><td>Región</td><td>Filtro de ubicación en el marketplace</td><td>Sí</td></tr>
+        <tr><td>Instagram (opcional)</td><td>Que los compradores conozcan más tu catálogo</td><td>Sí</td></tr>
+        <tr><td>Fotos de las cartas</td><td>Mostrar tus publicaciones</td><td>Sí</td></tr>
+        <tr><td>Título, precio, deporte, descripción de cada publicación</td><td>Mostrar tus publicaciones</td><td>Sí</td></tr>
+      </table>
+      <p>No pedimos ni almacenamos datos de tarjetas, cuentas bancarias ni ningún medio de pago — Cartopia no procesa pagos.</p>
+
+      <h2>2. Por qué algunos datos son públicos</h2>
+      <p>Cartopia funciona como una vidriera: para que un comprador pueda encontrar tu carta y escribirte, tu nombre de tienda, WhatsApp, región, Instagram (si lo agregas) y tus publicaciones se muestran públicamente a cualquier visitante del sitio, sin necesidad de que esa persona tenga una cuenta. Al registrarte como vendedor, aceptas que estos datos específicos queden visibles públicamente. Tu correo electrónico y tu contraseña nunca se muestran públicamente.</p>
+
+      <h2>3. Dónde se guardan los datos</h2>
+      <p>Los datos se almacenan en <strong>Supabase</strong>, un proveedor de base de datos e infraestructura en la nube que Cartopia usa como backend. Supabase aplica cifrado en tránsito y en reposo, y Cartopia configura reglas de acceso (Row Level Security) para que cada vendedor solo pueda modificar su propia información.</p>
+
+      <h2>4. No vendemos tus datos</h2>
+      <p>Cartopia no vende, arrienda ni comparte tus datos personales con terceros para fines publicitarios. Los únicos "terceros" involucrados son los proveedores de infraestructura que hacen funcionar el sitio (Supabase para base de datos y almacenamiento, Vercel para el hosting), que procesan los datos únicamente para prestar ese servicio técnico.</p>
+
+      <h2>5. Cuánto tiempo se guardan</h2>
+      <p>Tus datos y publicaciones se mantienen mientras tu cuenta exista. Si eliminas una publicación, deja de mostrarse de inmediato. Si quieres eliminar tu cuenta completa y todos tus datos asociados, escríbenos a <strong>[tu correo de contacto]</strong> y lo gestionamos.</p>
+
+      <h2>6. Uso de almacenamiento local del navegador</h2>
+      <p>El sitio puede guardar información técnica en el almacenamiento local de tu navegador (por ejemplo, para mantener tu sesión iniciada o recordar preferencias como el tema claro/oscuro). Esta información vive solo en tu propio dispositivo y no se comparte con Cartopia ni con terceros.</p>
+
+      <h2>7. Menores de edad</h2>
+      <p>Cartopia no está dirigido a menores de 18 años. Si eres menor de edad, puedes navegar el catálogo junto a un adulto responsable, pero no debes crear una cuenta de vendedor ni entregar datos de contacto propios sin la supervisión de un adulto.</p>
+
+      <h2>8. Tus derechos</h2>
+      <p>Puedes pedir en cualquier momento: acceder a los datos que tenemos sobre ti, corregirlos, o eliminarlos junto con tu cuenta. Para ejercer cualquiera de estos derechos, escríbenos a <strong>[tu correo de contacto]</strong>.</p>
+
+      <h2>9. Cambios a esta política</h2>
+      <p>Podemos actualizar esta política en cualquier momento; la fecha de "última actualización" arriba refleja la versión vigente. El uso continuado del sitio implica la aceptación de la política actualizada.</p>
+
+      <h2>10. Contacto</h2>
+      <p>Para cualquier consulta sobre privacidad o tus datos, escríbenos a <strong>[tu correo de contacto]</strong>.</p>
+    </article>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Cartopia — cartopia.cl</span>
+    <div class="links">
+      <a href="terminos.html">Términos y Condiciones</a>
+      <a href="privacidad.html">Privacidad</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
