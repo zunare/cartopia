@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8" />
+<title>Términos y Condiciones — Cartopia</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2F5EF; --surface:#FFFFFF; --surface-2:#E8ECE3; --border:#D6DCCE;
+    --ink:#121A15; --ink-soft:#4C5A4F; --ink-faint:#7B8A7E;
+    --accent:#0E8C86; --accent-strong:#0B7873; --on-accent:#F4FFF8;
+    --gold-soft:#F4E7C8; --gold:#B9821F;
+    --font-display:'Big Shoulders Display', system-ui, sans-serif;
+    --font-body:'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    --font-mono:'IBM Plex Mono', ui-monospace, monospace;
+    --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px; --sp-7:48px;
+    --radius-sm:6px; --radius-md:10px;
+    --shadow-card: 0 1px 2px rgba(18,26,21,.06), 0 8px 24px -12px rgba(18,26,21,.18);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0B120D; --surface:#121B15; --surface-2:#1A251C; --border:#2A392C;
+      --ink:#ECF3E9; --ink-soft:#AEBCA8; --ink-faint:#7C8B7E;
+      --accent:#2FD9CC; --accent-strong:#4EE6DA; --on-accent:#05170D;
+      --gold-soft:#3A2F14; --gold:#F0C568;
+      --shadow-card: 0 1px 2px rgba(0,0,0,.35), 0 12px 30px -14px rgba(0,0,0,.55);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0B120D; --surface:#121B15; --surface-2:#1A251C; --border:#2A392C;
+    --ink:#ECF3E9; --ink-soft:#AEBCA8; --ink-faint:#7C8B7E;
+    --accent:#2FD9CC; --accent-strong:#4EE6DA; --on-accent:#05170D;
+    --gold-soft:#3A2F14; --gold:#F0C568;
+    --shadow-card: 0 1px 2px rgba(0,0,0,.35), 0 12px 30px -14px rgba(0,0,0,.55);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--font-body); line-height:1.6;}
+  a{color:var(--accent-strong);}
+  h1,h2{font-family:var(--font-display); font-weight:800; margin:0; text-wrap:balance;}
+  .wrap{max-width:760px; margin:0 auto; padding:0 var(--sp-5);}
+  @media (max-width:640px){ .wrap{padding:0 var(--sp-4);} }
+ 
+  header.site{border-bottom:1px solid var(--border); padding:var(--sp-4) 0;}
+  .nav{display:flex; align-items:center; justify-content:space-between; gap:var(--sp-4);}
+  .brand{display:flex; align-items:center; gap:8px; font-family:var(--font-display); font-weight:900; font-size:1.3rem; text-decoration:none; color:var(--ink);}
+  .brand .mark{width:22px; height:22px; border-radius:6px; background:linear-gradient(155deg, var(--accent), var(--accent-strong)); position:relative; flex:none;}
+  .brand .mark::after{content:""; position:absolute; inset:4px; border:2px solid var(--on-accent); border-radius:2px; opacity:.75;}
+  .back{font-size:.85rem; font-weight:600; text-decoration:none; color:var(--ink-soft); display:inline-flex; align-items:center; gap:6px;}
+  .back:hover{color:var(--ink);}
+ 
+  main{padding:var(--sp-7) 0 var(--sp-6);}
+  .eyebrow{font-family:var(--font-mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent-strong); font-weight:600;}
+  h1{font-size:clamp(2rem, 4vw + 1rem, 2.8rem); margin:var(--sp-3) 0 var(--sp-2);}
+  .updated{color:var(--ink-faint); font-size:.85rem; margin-bottom:var(--sp-6);}
+  .callout{
+    background:var(--gold-soft); border:1px solid color-mix(in srgb, var(--gold) 45%, var(--border));
+    border-radius:var(--radius-md); padding:var(--sp-4) var(--sp-5); margin-bottom:var(--sp-6); font-size:.92rem;
+  }
+  article h2{font-size:1.35rem; margin:var(--sp-6) 0 var(--sp-3);}
+  article p, article li{color:var(--ink-soft); font-size:.98rem;}
+  article ul, article ol{padding-left:1.3em;}
+  article li{margin-bottom:8px;}
+  article strong{color:var(--ink);}
+ 
+  footer{border-top:1px solid var(--border); padding:var(--sp-6) 0; color:var(--ink-faint); font-size:.82rem; margin-top:var(--sp-7);}
+  footer .links{display:flex; gap:var(--sp-4); margin-top:8px;}
+  footer a{color:var(--ink-faint); text-decoration:none;}
+  footer a:hover{color:var(--ink-soft);}
+</style>
+</head>
+<body>
+ 
+<header class="site">
+  <div class="wrap nav">
+    <a class="brand" href="index.html"><span class="mark" aria-hidden="true"></span>Cartopia</a>
+    <a class="back" href="index.html">← Volver al marketplace</a>
+  </div>
+</header>
+ 
+<main>
+  <div class="wrap">
+    <span class="eyebrow">Legal</span>
+    <h1>Términos y Condiciones</h1>
+    <p class="updated">Última actualización: 23 de agosto de 2026</p>
+ 
+    <div class="callout">
+      Resumen en una frase: <strong>Cartopia es una vidriera</strong> donde vendedores publican sus cartas y compradores los contactan por WhatsApp — nosotros no vendemos nada, no procesamos pagos, no verificamos a los usuarios ni garantizamos ninguna transacción. Lo que pasa entre comprador y vendedor es responsabilidad exclusiva de ambos.
+    </div>
+ 
+    <article>
+      <h2>1. Qué es Cartopia</h2>
+      <p>Cartopia (<strong>cartopia.cl</strong>) es un directorio y punto de encuentro entre personas que compran y venden cartas coleccionables deportivas en Chile. Cualquier vendedor registrado puede publicar sus propias cartas, con su propia foto, precio y datos de contacto. Cartopia no es dueño de las cartas publicadas, no las vende, no las envía y no participa en la transacción entre comprador y vendedor.</p>
+ 
+      <h2>2. No somos parte de la transacción</h2>
+      <p>Cartopia solo conecta a las personas — no interviene en el pago, el envío, la entrega ni en ningún otro aspecto de la compraventa. Al usar el sitio, aceptas que:</p>
+      <ul>
+        <li>Cartopia <strong>no verifica la identidad</strong> de quienes se registran como vendedores, ni la autenticidad, el estado o la titularidad de las cartas publicadas.</li>
+        <li>Cartopia <strong>no garantiza</strong> que una publicación siga disponible, que el precio sea correcto, ni que la transacción se concrete de buena fe por ambas partes.</li>
+        <li>Cartopia <strong>no se hace responsable</strong> por estafas, incumplimientos, cartas falsificadas o en mal estado, pagos no recibidos, envíos perdidos, ni por ningún daño, pérdida o perjuicio (económico o de otro tipo) que resulte del contacto o la transacción entre usuarios.</li>
+        <li>Cualquier disputa entre comprador y vendedor debe resolverse directamente entre ellos.</li>
+      </ul>
+ 
+      <h2>3. Recomendaciones de seguridad</h2>
+      <p>Para reducir riesgos al comprar o vender, te recomendamos:</p>
+      <ul>
+        <li>Preferir puntos de encuentro públicos y en horario de día si van a juntarse en persona.</li>
+        <li>Revisar fotos y pedir referencias o publicaciones anteriores del vendedor antes de pagar.</li>
+        <li>Usar envíos con seguimiento (Chilexpress, Starken, Correos de Chile) en vez de transferencias sin ningún respaldo.</li>
+        <li>Desconfiar de precios muy por debajo del valor de mercado de una carta.</li>
+        <li>Nunca compartir datos bancarios, claves ni códigos de verificación por WhatsApp.</li>
+      </ul>
+ 
+      <h2>4. Cuentas de vendedor</h2>
+      <p>Al registrarte como vendedor, declaras que la información que entregas (nombre de catálogo, WhatsApp, región, correo) es real y tuya, y que tienes derecho a publicar las fotos que subes. No está permitido publicar cartas falsificadas a sabiendas, contenido ilegal, ni usar el sitio para fines distintos a la compraventa de cartas coleccionables deportivas.</p>
+      <p>Cartopia puede eliminar publicaciones o cuentas que incumplan estos términos, contengan contenido falso o fraudulento, o sobre las que se reciban reportes fundados de otros usuarios, sin previo aviso.</p>
+ 
+      <h2>5. Disponibilidad del sitio</h2>
+      <p>Cartopia se ofrece "tal cual", sin garantía de disponibilidad continua. El sitio puede tener interrupciones, cambios o discontinuarse en cualquier momento.</p>
+ 
+      <h2>6. Publicaciones destacadas y planes pagos</h2>
+      <p>Cuando estén disponibles, las publicaciones destacadas y los planes de vendedor son servicios de mayor visibilidad dentro del sitio — no constituyen una garantía de venta ni una recomendación de Cartopia sobre el vendedor o la carta.</p>
+ 
+      <h2>7. Cambios a estos términos</h2>
+      <p>Podemos actualizar estos términos en cualquier momento; la fecha de "última actualización" arriba refleja la versión vigente. El uso continuado del sitio implica la aceptación de los términos actualizados.</p>
+ 
+      <h2>8. Contacto</h2>
+      <p>Para consultas sobre estos términos, escríbenos a <strong>[tu correo de contacto]</strong>.</p>
+    </article>
+  </div>
+</main>
+ 
+<footer>
+  <div class="wrap">
+    <span>© 2026 Cartopia — cartopia.cl</span>
+    <div class="links">
+      <a href="terminos.html">Términos y Condiciones</a>
+      <a href="privacidad.html">Privacidad</a>
+    </div>
+  </div>
+</footer>
+ 
+</body>
+</html>
