@@ -157,6 +157,10 @@
   .brand .mark::after{
     content:""; position:absolute; inset:5px; border:2px solid var(--on-accent); border-radius:2px; opacity:.75;
   }
+  .brand-logo{ height:34px; width:auto; display:block; }
+  .logo-for-light{ display:none; }
+  :root[data-theme="light"] .logo-for-dark{ display:none; }
+  :root[data-theme="light"] .logo-for-light{ display:block; }
   .navlinks{display:flex; align-items:center; gap:var(--sp-5); font-size:.92rem; font-weight:600;}
   .navlinks a{text-decoration:none; color:var(--ink-soft); cursor:pointer;}
   .navlinks a:hover{color:var(--ink);}
@@ -473,7 +477,8 @@
 <header class="site">
   <div class="wrap nav">
     <button class="brand" id="logoBtn" type="button" aria-label="Ir al inicio">
-      <span class="mark" aria-hidden="true"></span>Cartopia
+      <img src="logo-dark.png" alt="Cartopia" class="brand-logo logo-for-dark">
+      <img src="logo-light.png" alt="Cartopia" class="brand-logo logo-for-light">
     </button>
     <nav class="navlinks">
       <a id="navMarket">Marketplace</a>
@@ -623,7 +628,10 @@
 
 <footer>
   <div class="wrap">
-    <div class="brand" style="pointer-events:none;"><span class="mark" aria-hidden="true"></span>Cartopia</div>
+    <div class="brand" style="pointer-events:none;">
+      <img src="logo-dark.png" alt="Cartopia" class="brand-logo logo-for-dark">
+      <img src="logo-light.png" alt="Cartopia" class="brand-logo logo-for-light">
+    </div>
     <p>Cartopia conecta compradores y vendedores de cartas coleccionables deportivas en Chile. Funciona como vidriera: no interviene en pagos, envíos ni garantías.</p>
     <div class="foot-links">
       <a href="terminos.html">Términos y Condiciones</a>
