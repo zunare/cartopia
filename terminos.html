@@ -1,10 +1,21 @@
 <!doctype html>
-<html lang="es-CL">
+<html lang="es-CL" data-theme="dark">
 <head>
 <meta charset="utf-8" />
 <title>Términos y Condiciones — Cartopia</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="noindex" />
+<script>
+  (function(){
+    try{
+      var saved = localStorage.getItem("cartopia-theme");
+      var theme = (saved === "light" || saved === "dark") ? saved : "dark";
+      document.documentElement.setAttribute("data-theme", theme);
+    }catch(e){
+      document.documentElement.setAttribute("data-theme", "dark");
+    }
+  })();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -43,7 +54,7 @@
   h1,h2{font-family:var(--font-display); font-weight:800; margin:0; text-wrap:balance;}
   .wrap{max-width:760px; margin:0 auto; padding:0 var(--sp-5);}
   @media (max-width:640px){ .wrap{padding:0 var(--sp-4);} }
- 
+
   header.site{border-bottom:1px solid var(--border); padding:var(--sp-4) 0;}
   .nav{display:flex; align-items:center; justify-content:space-between; gap:var(--sp-4);}
   .brand{display:flex; align-items:center; gap:8px; font-family:var(--font-display); font-weight:900; font-size:1.3rem; text-decoration:none; color:var(--ink);}
@@ -51,7 +62,16 @@
   .brand .mark::after{content:""; position:absolute; inset:4px; border:2px solid var(--on-accent); border-radius:2px; opacity:.75;}
   .back{font-size:.85rem; font-weight:600; text-decoration:none; color:var(--ink-soft); display:inline-flex; align-items:center; gap:6px;}
   .back:hover{color:var(--ink);}
- 
+  .nav-right{display:flex; align-items:center; gap:var(--sp-4);}
+  .theme-toggle{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:36px; height:36px; border-radius:50%; flex:none;
+    border:1px solid var(--border); background:var(--surface-2); color:var(--ink-soft);
+    cursor:pointer; transition:color .15s ease, border-color .15s ease;
+  }
+  .theme-toggle:hover{ color:var(--ink); border-color:var(--accent); }
+  .theme-toggle svg{ display:block; width:16px; height:16px; }
+
   main{padding:var(--sp-7) 0 var(--sp-6);}
   .eyebrow{font-family:var(--font-mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent-strong); font-weight:600;}
   h1{font-size:clamp(2rem, 4vw + 1rem, 2.8rem); margin:var(--sp-3) 0 var(--sp-2);}
@@ -65,7 +85,7 @@
   article ul, article ol{padding-left:1.3em;}
   article li{margin-bottom:8px;}
   article strong{color:var(--ink);}
- 
+
   footer{border-top:1px solid var(--border); padding:var(--sp-6) 0; color:var(--ink-faint); font-size:.82rem; margin-top:var(--sp-7);}
   footer .links{display:flex; gap:var(--sp-4); margin-top:8px;}
   footer a{color:var(--ink-faint); text-decoration:none;}
@@ -73,28 +93,31 @@
 </style>
 </head>
 <body>
- 
+
 <header class="site">
   <div class="wrap nav">
     <a class="brand" href="index.html"><span class="mark" aria-hidden="true"></span>Cartopia</a>
-    <a class="back" href="index.html">← Volver al marketplace</a>
+    <div class="nav-right">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Cambiar tema"></button>
+      <a class="back" href="index.html">← Volver al marketplace</a>
+    </div>
   </div>
 </header>
- 
+
 <main>
   <div class="wrap">
     <span class="eyebrow">Legal</span>
     <h1>Términos y Condiciones</h1>
     <p class="updated">Última actualización: 23 de agosto de 2026</p>
- 
+
     <div class="callout">
       Resumen en una frase: <strong>Cartopia es una vidriera</strong> donde vendedores publican sus cartas y compradores los contactan por WhatsApp — nosotros no vendemos nada, no procesamos pagos, no verificamos a los usuarios ni garantizamos ninguna transacción. Lo que pasa entre comprador y vendedor es responsabilidad exclusiva de ambos.
     </div>
- 
+
     <article>
       <h2>1. Qué es Cartopia</h2>
       <p>Cartopia (<strong>cartopia.cl</strong>) es un directorio y punto de encuentro entre personas que compran y venden cartas coleccionables deportivas en Chile. Cualquier vendedor registrado puede publicar sus propias cartas, con su propia foto, precio y datos de contacto. Cartopia no es dueño de las cartas publicadas, no las vende, no las envía y no participa en la transacción entre comprador y vendedor.</p>
- 
+
       <h2>2. No somos parte de la transacción</h2>
       <p>Cartopia solo conecta a las personas — no interviene en el pago, el envío, la entrega ni en ningún otro aspecto de la compraventa. Al usar el sitio, aceptas que:</p>
       <ul>
@@ -103,7 +126,7 @@
         <li>Cartopia <strong>no se hace responsable</strong> por estafas, incumplimientos, cartas falsificadas o en mal estado, pagos no recibidos, envíos perdidos, ni por ningún daño, pérdida o perjuicio (económico o de otro tipo) que resulte del contacto o la transacción entre usuarios.</li>
         <li>Cualquier disputa entre comprador y vendedor debe resolverse directamente entre ellos.</li>
       </ul>
- 
+
       <h2>3. Recomendaciones de seguridad</h2>
       <p>Para reducir riesgos al comprar o vender, te recomendamos:</p>
       <ul>
@@ -113,26 +136,26 @@
         <li>Desconfiar de precios muy por debajo del valor de mercado de una carta.</li>
         <li>Nunca compartir datos bancarios, claves ni códigos de verificación por WhatsApp.</li>
       </ul>
- 
+
       <h2>4. Cuentas de vendedor</h2>
       <p>Al registrarte como vendedor, declaras que la información que entregas (nombre de catálogo, WhatsApp, región, correo) es real y tuya, y que tienes derecho a publicar las fotos que subes. No está permitido publicar cartas falsificadas a sabiendas, contenido ilegal, ni usar el sitio para fines distintos a la compraventa de cartas coleccionables deportivas.</p>
       <p>Cartopia puede eliminar publicaciones o cuentas que incumplan estos términos, contengan contenido falso o fraudulento, o sobre las que se reciban reportes fundados de otros usuarios, sin previo aviso.</p>
- 
+
       <h2>5. Disponibilidad del sitio</h2>
       <p>Cartopia se ofrece "tal cual", sin garantía de disponibilidad continua. El sitio puede tener interrupciones, cambios o discontinuarse en cualquier momento.</p>
- 
+
       <h2>6. Publicaciones destacadas y planes pagos</h2>
       <p>Cuando estén disponibles, las publicaciones destacadas y los planes de vendedor son servicios de mayor visibilidad dentro del sitio — no constituyen una garantía de venta ni una recomendación de Cartopia sobre el vendedor o la carta.</p>
- 
+
       <h2>7. Cambios a estos términos</h2>
       <p>Podemos actualizar estos términos en cualquier momento; la fecha de "última actualización" arriba refleja la versión vigente. El uso continuado del sitio implica la aceptación de los términos actualizados.</p>
- 
+
       <h2>8. Contacto</h2>
       <p>Para consultas sobre estos términos, escríbenos a <strong>[tu correo de contacto]</strong>.</p>
     </article>
   </div>
 </main>
- 
+
 <footer>
   <div class="wrap">
     <span>© 2026 Cartopia — cartopia.cl</span>
@@ -142,6 +165,34 @@
     </div>
   </div>
 </footer>
- 
+
+<script>
+  (function(){
+    var SUN_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><line x1="12" y1="2" x2="12" y2="4"></line><line x1="12" y1="20" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"></line><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="4" y2="12"></line><line x1="20" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="6.34" y2="17.66"></line><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"></line></svg>';
+    var MOON_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+    var btn = document.getElementById("themeToggle");
+    if(!btn) return;
+    function currentTheme(){
+      return document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
+    }
+    function paint(){
+      if(currentTheme() === "dark"){
+        btn.innerHTML = SUN_ICON;
+        btn.setAttribute("aria-label", "Cambiar a modo claro");
+      } else {
+        btn.innerHTML = MOON_ICON;
+        btn.setAttribute("aria-label", "Cambiar a modo oscuro");
+      }
+    }
+    paint();
+    btn.addEventListener("click", function(){
+      var next = currentTheme() === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      try{ localStorage.setItem("cartopia-theme", next); }catch(e){}
+      paint();
+    });
+  })();
+</script>
+
 </body>
 </html>
