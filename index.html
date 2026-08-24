@@ -282,11 +282,12 @@
     background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md);
     padding:var(--sp-4); cursor:pointer; text-align:left; box-shadow:var(--shadow-card);
     transition:border-color .15s ease, transform .12s ease;
+    color:var(--ink); font-family:var(--font-body);
   }
   .vendor-chip:hover{border-color:var(--accent); transform:translateY(-2px);}
-  .vendor-chip .vname{font-weight:700; font-size:1rem; margin-bottom:2px;}
+  .vendor-chip .vname{font-weight:700; font-size:1rem; margin-bottom:2px; color:var(--ink);}
   .vendor-chip .vregion{font-size:.8rem; color:var(--accent-strong); margin-bottom:var(--sp-3);}
-  .vendor-chip .vstats{display:flex; gap:var(--sp-3); font-family:var(--font-mono); font-size:.78rem;}
+  .vendor-chip .vstats{display:flex; gap:var(--sp-3); font-family:var(--font-mono); font-size:.78rem; color:var(--ink-soft);}
   .vendor-chip .vstats b{color:var(--accent-strong); font-weight:600;}
 
   .vendor-header{
