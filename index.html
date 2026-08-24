@@ -969,6 +969,23 @@
   function isValidPhone(digits){ return /^56\d{9}$/.test(digits); }
   function vendorInitial(v){ return esc((v && v.store ? v.store : "?").trim().charAt(0).toUpperCase()); }
   function avatarInner(v){ return (v && v.avatar_url) ? '<img src="'+esc(v.avatar_url)+'" alt="" />' : vendorInitial(v); }
+  function withTimeout(promise, ms){
+    return new Promise(function(resolve, reject){
+      var done = false;
+      var timer = setTimeout(function(){
+        if(done) return;
+        done = true;
+        reject(new Error("La conexión está muy lenta o se cortó. Revisa tu internet e intenta de nuevo."));
+      }, ms);
+      promise.then(function(v){
+        if(done) return;
+        done = true; clearTimeout(timer); resolve(v);
+      }, function(e){
+        if(done) return;
+        done = true; clearTimeout(timer); reject(e);
+      });
+    });
+  }
   function toast(msg){
     var el = $("#toast");
     el.textContent = msg;
@@ -1359,7 +1376,7 @@
     var btn = $("#registerSubmitBtn");
     btn.disabled = true; btn.textContent = "Creando…";
 
-    sb.auth.signUp({ email: email, password: password }).then(function(res){
+    withTimeout(sb.auth.signUp({ email: email, password: password }).then(function(res){
       if(res.error) throw res.error;
       var user = (res.data && res.data.user) || (res.data.session && res.data.session.user);
       if(!user || !res.data.session){
@@ -1378,7 +1395,7 @@
         renderAll();
         openPublishDialog();
       });
-    }).catch(function(error){
+    }), 20000).catch(function(error){
       err.textContent = error.message || "No se pudo crear la cuenta.";
     }).finally(function(){
       btn.disabled = false; btn.textContent = "Crear mi catálogo";
@@ -1394,7 +1411,7 @@
     var btn = $("#loginSubmitBtn");
     btn.disabled = true; btn.textContent = "Entrando…";
 
-    sb.auth.signInWithPassword({ email: email, password: password }).then(function(res){
+    withTimeout(sb.auth.signInWithPassword({ email: email, password: password }).then(function(res){
       if(res.error) throw res.error;
       return loadSession().then(function(){
         return loadVendors();
@@ -1404,8 +1421,8 @@
         toast("Bienvenido de vuelta" + (currentVendor ? ", " + currentVendor.store : ""));
         renderAll();
       });
-    }).catch(function(error){
-      err.textContent = "Correo o contraseña incorrectos.";
+    }), 20000).catch(function(error){
+      err.textContent = (error && error.message && error.message.indexOf("lenta") !== -1) ? error.message : "Correo o contraseña incorrectos.";
     }).finally(function(){
       btn.disabled = false; btn.textContent = "Entrar a mi catálogo";
     });
@@ -1491,7 +1508,7 @@
     btn.disabled = true; btn.textContent = "Publicando…";
 
     var path = currentUser.id + "/" + Date.now() + ".jpg";
-    sb.storage.from(BUCKET).upload(path, pendingBlob, { contentType:"image/jpeg" }).then(function(res){
+    withTimeout(sb.storage.from(BUCKET).upload(path, pendingBlob, { contentType:"image/jpeg" }).then(function(res){
       if(res.error) throw res.error;
       var pub = sb.storage.from(BUCKET).getPublicUrl(path);
       var photoUrl = pub.data.publicUrl;
@@ -1508,7 +1525,7 @@
       return loadListings();
     }).then(function(){
       renderAll();
-    }).catch(function(error){
+    }), 30000).catch(function(error){
       err.textContent = error.message || "No se pudo publicar, intenta de nuevo.";
     }).finally(function(){
       btn.disabled = false; btn.textContent = "Publicar carta";
@@ -1581,7 +1598,7 @@
       uploadStep = Promise.resolve(currentVendor.avatar_url || null);
     }
 
-    uploadStep.then(function(avatarUrl){
+    withTimeout(uploadStep.then(function(avatarUrl){
       return sb.from("vendors").update({
         bio: bio || null, avatar_url: avatarUrl
       }).eq("id", currentUser.id);
@@ -1596,7 +1613,7 @@
       toast("Perfil actualizado");
       renderAll();
       if(filters.vendorId === currentUser.id) setVendorFilter(currentUser.id);
-    }).catch(function(error){
+    }), 30000).catch(function(error){
       err.textContent = error.message || "No se pudo guardar, intenta de nuevo.";
     }).finally(function(){
       btn.disabled = false; btn.textContent = "Guardar cambios";
@@ -1774,9 +1791,15 @@
   /* ---------- init ---------- */
   function init(){
     if(!sb){ renderAll(); return; }
-    loadSession()
-      .then(function(){ return Promise.all([loadVendors(), loadListings()]); })
-      .then(function(){ renderAll(); checkHashDeepLink(); wireRealtime(); });
+    withTimeout(
+      loadSession().then(function(){ return Promise.all([loadVendors(), loadListings()]); }),
+      15000
+    ).then(function(){
+      renderAll(); checkHashDeepLink(); wireRealtime();
+    }).catch(function(){
+      renderAll();
+      toast("La conexión está lenta. Si no ves las cartas, recarga la página.");
+    });
   }
   init();
 
