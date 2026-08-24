@@ -282,11 +282,23 @@
     background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md);
     padding:var(--sp-4); cursor:pointer; text-align:left; box-shadow:var(--shadow-card);
     transition:border-color .15s ease, transform .12s ease;
-    color:var(--ink); font-family:var(--font-body);
+    color:var(--ink); font-family:var(--font-body); min-width:0;
   }
   .vendor-chip:hover{border-color:var(--accent); transform:translateY(-2px);}
-  .vendor-chip .vname{font-weight:700; font-size:1rem; margin-bottom:2px; color:var(--ink);}
-  .vendor-chip .vregion{font-size:.8rem; color:var(--accent-strong); margin-bottom:var(--sp-3);}
+  .vendor-chip .vhead{display:flex; align-items:center; gap:var(--sp-3); margin-bottom:var(--sp-2);}
+  .vendor-chip .vavatar{
+    flex:none; width:40px; height:40px; border-radius:50%; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(155deg, var(--accent), var(--accent-strong)); color:var(--on-accent);
+    font-family:var(--font-display); font-weight:800; font-size:1rem;
+  }
+  .vendor-chip .vavatar img{width:100%; height:100%; object-fit:cover; display:block;}
+  .vendor-chip .vname{font-weight:700; font-size:1rem; color:var(--ink); flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .vendor-chip .vregion{font-size:.8rem; color:var(--accent-strong); margin-bottom:var(--sp-2);}
+  .vendor-chip .vbio{
+    font-size:.78rem; color:var(--ink-soft); margin-bottom:var(--sp-3); line-height:1.4;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+  }
   .vendor-chip .vstats{display:flex; gap:var(--sp-3); font-family:var(--font-mono); font-size:.78rem; color:var(--ink-soft);}
   .vendor-chip .vstats b{color:var(--accent-strong); font-weight:600;}
 
@@ -301,14 +313,16 @@
   .vh-back:hover{color:var(--ink);}
   .vh-main{display:flex; align-items:center; gap:var(--sp-4); flex-wrap:wrap;}
   .vh-avatar{
-    flex:none; width:56px; height:56px; border-radius:50%;
+    flex:none; width:56px; height:56px; border-radius:50%; overflow:hidden;
     display:flex; align-items:center; justify-content:center;
     background:linear-gradient(155deg, var(--accent), var(--accent-strong)); color:var(--on-accent);
     font-family:var(--font-display); font-weight:800; font-size:1.4rem;
   }
+  .vh-avatar img{width:100%; height:100%; object-fit:cover; display:block;}
   .vh-info{flex:1 1 200px; min-width:0;}
   .vh-name{font-family:var(--font-display); font-weight:800; font-size:1.4rem; line-height:1.15;}
   .vh-meta{display:flex; gap:var(--sp-3); flex-wrap:wrap; color:var(--ink-faint); font-size:.85rem; margin-top:4px;}
+  .vh-bio{color:var(--ink-soft); font-size:.9rem; line-height:1.5; margin-top:var(--sp-2); max-width:60ch;}
   .vh-actions{display:flex; align-items:center; gap:var(--sp-3); flex-wrap:wrap;}
 
   .toolbar{
@@ -393,6 +407,7 @@
     .card .owner-controls button{ font-size:.6rem; padding:4px 6px; }
     .vendor-chip{ padding:var(--sp-3); }
     .vendor-chip .vname{ font-size:.9rem; }
+    .vendor-chip .vavatar{ width:32px; height:32px; font-size:.85rem; }
   }
   @media (max-width:380px){
     .grid{ gap:var(--sp-2); }
@@ -474,6 +489,17 @@
   .photo-drop p{margin:var(--sp-2) 0 0; font-size:.82rem; color:var(--ink-faint);}
   .photo-drop input{position:absolute; inset:0; opacity:0; cursor:pointer;}
 
+  .avatar-drop{
+    width:110px; height:110px; border-radius:50%; border:1.5px dashed var(--border);
+    cursor:pointer; position:relative; overflow:hidden; background:var(--paper);
+    display:flex; align-items:center; justify-content:center; margin:0 auto;
+  }
+  .avatar-drop:hover{border-color:var(--accent);}
+  .avatar-drop img{width:100%; height:100%; object-fit:cover; display:block;}
+  .avatar-drop svg{color:var(--ink-faint);}
+  .avatar-drop input{position:absolute; inset:0; opacity:0; cursor:pointer;}
+  .link-btn{background:none; border:none; padding:0; color:var(--accent-strong); font-weight:600; cursor:pointer; text-decoration:underline; font-size:inherit;}
+
   .detail-grid{display:grid; grid-template-columns:1fr; gap:var(--sp-4);}
   .detail-photo{aspect-ratio:4/5; border-radius:var(--radius-md); background:var(--surface-2); overflow:hidden; max-width:280px; margin:0 auto;}
   .detail-photo img{width:100%; height:100%; object-fit:cover;}
@@ -481,9 +507,17 @@
   .detail-price{font-family:var(--font-mono); font-size:1.8rem; font-weight:600;}
   .wa-note{font-size:.78rem; color:var(--ink-faint); text-align:center; margin-top:8px;}
   .seller-box{background:var(--surface-2); border-radius:var(--radius-md); padding:var(--sp-4); margin-top:var(--sp-4);}
-  .seller-box .srow{display:flex; align-items:center; justify-content:space-between; gap:var(--sp-3); margin-bottom:var(--sp-3);}
+  .seller-box .srow{display:flex; align-items:center; gap:var(--sp-3); margin-bottom:var(--sp-3);}
+  .seller-box .savatar{
+    flex:none; width:44px; height:44px; border-radius:50%; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(155deg, var(--accent), var(--accent-strong)); color:var(--on-accent);
+    font-family:var(--font-display); font-weight:800; font-size:1.1rem;
+  }
+  .seller-box .savatar img{width:100%; height:100%; object-fit:cover; display:block;}
   .seller-box .sname{font-weight:700;}
   .seller-box .sregion{font-size:.8rem; color:var(--ink-faint);}
+  .seller-box .sbio{font-size:.85rem; color:var(--ink-soft); line-height:1.5; margin-bottom:var(--sp-3);}
   .seller-actions{display:flex; gap:8px; flex-wrap:wrap;}
   .disclaimer{font-size:.76rem; color:var(--ink-faint); margin-top:var(--sp-4); line-height:1.5;}
   .own-controls{display:flex; gap:8px; margin-top:var(--sp-4); padding-top:var(--sp-4); border-top:1px solid var(--border);}
@@ -602,6 +636,7 @@
               <span id="vhRegion"></span>
               <span id="vhCount"></span>
             </div>
+            <p class="vh-bio" id="vhBio" style="display:none;"></p>
           </div>
           <div class="vh-actions">
             <a id="vhInstagram" class="btn btn-ghost" style="display:none;" target="_blank" rel="noopener">Instagram</a>
@@ -789,6 +824,34 @@
   </div>
 </dialog>
 
+<!-- ===================== PROFILE DIALOG ===================== -->
+<dialog id="profileDialog">
+  <div class="dialog-head">
+    <h3>Editar mi perfil</h3>
+    <button class="dialog-close" data-close="profileDialog" type="button" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="dialog-body">
+    <form id="profileForm" novalidate>
+      <div class="field-group">
+        <label for="profAvatar">Foto de perfil (opcional)</label>
+        <div class="avatar-drop" id="avatarDrop">
+          <div id="avatarPreviewWrap">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          </div>
+          <input type="file" accept="image/*" id="profAvatar" />
+        </div>
+        <p class="hint" style="text-align:center;">Se muestra en círculo. <button type="button" id="removeAvatarBtn" class="link-btn" style="display:none;">Quitar foto</button></p>
+      </div>
+      <div class="field-group">
+        <label for="profBio">Descripción de tu catálogo (opcional)</label>
+        <textarea id="profBio" maxlength="280" placeholder="Cuéntales a los compradores qué tipo de cartas vendes, hace cuánto coleccionas, etc."></textarea>
+      </div>
+      <div class="err" id="profileErr"></div>
+      <button class="btn btn-primary btn-block" type="submit" id="profileSubmitBtn">Guardar cambios</button>
+    </form>
+  </div>
+</dialog>
+
 <!-- ===================== DETAIL DIALOG ===================== -->
 <dialog id="detailDialog">
   <div class="dialog-head">
@@ -814,11 +877,13 @@
 
         <div class="seller-box">
           <div class="srow">
+            <div class="savatar" id="detailSellerAvatar"></div>
             <div>
               <div class="sname" id="detailSellerName"></div>
               <div class="sregion" id="detailSellerRegion"></div>
             </div>
           </div>
+          <p class="sbio" id="detailSellerBio" style="display:none;"></p>
           <div class="seller-actions">
             <a class="btn btn-quiet btn-sm" id="detailInstagram" href="#" target="_blank" rel="noopener" style="display:none;">Instagram</a>
             <button class="btn btn-quiet btn-sm" id="detailSeeVendor" type="button">Ver catálogo del vendedor</button>
@@ -902,6 +967,8 @@
     return digits;
   }
   function isValidPhone(digits){ return /^56\d{9}$/.test(digits); }
+  function vendorInitial(v){ return esc((v && v.store ? v.store : "?").trim().charAt(0).toUpperCase()); }
+  function avatarInner(v){ return (v && v.avatar_url) ? '<img src="'+esc(v.avatar_url)+'" alt="" />' : vendorInitial(v); }
   function toast(msg){
     var el = $("#toast");
     el.textContent = msg;
@@ -928,6 +995,8 @@
   var allVendors = [];
   var filters = { search:"", sport:"Todos", region:"all", sort:"recent", vendorId:null };
   var pendingBlob = null;
+  var pendingAvatarBlob = null;
+  var avatarRemoved = false;
 
   /* ---------- static selects ---------- */
   function fillRegionSelect(sel, withAll){
@@ -990,7 +1059,7 @@
   function loadListings(){
     if(!sb) return Promise.resolve();
     return sb.from("listings")
-      .select("*, vendors(store, whatsapp, region, instagram)")
+      .select("*, vendors(store, whatsapp, region, instagram, bio, avatar_url)")
       .order("created_at", { ascending:false })
       .then(function(res){
         allListings = (res.data || []).map(function(row){
@@ -1037,9 +1106,11 @@
     wrap.innerHTML = allVendors.map(function(v){
       var mine = allListings.filter(function(l){ return l.vendor_id === v.id; });
       var avail = mine.filter(function(l){ return l.status === "disponible"; }).length;
+      var bioHtml = v.bio ? '<div class="vbio">'+esc(v.bio)+'</div>' : '';
       return '<button type="button" class="vendor-chip" data-vendor-id="'+esc(v.id)+'">'+
-        '<div class="vname">'+esc(v.store)+'</div>'+
+        '<div class="vhead"><div class="vavatar">'+avatarInner(v)+'</div><div class="vname">'+esc(v.store)+'</div></div>'+
         '<div class="vregion">'+esc(v.region)+'</div>'+
+        bioHtml+
         '<div class="vstats"><span><b>'+avail+'</b> disp.</span><span>'+mine.length+' públ.</span></div>'+
         '</button>';
     }).join("");
@@ -1187,10 +1258,13 @@
 
       var mine = allListings.filter(function(l){ return l.vendor_id === v.id; });
       var avail = mine.filter(function(l){ return l.status === "disponible"; }).length;
-      $("#vhAvatar").textContent = (v.store || "?").trim().charAt(0).toUpperCase();
+      $("#vhAvatar").innerHTML = avatarInner(v);
       $("#vhName").textContent = v.store;
       $("#vhRegion").textContent = v.region;
       $("#vhCount").textContent = avail + (avail === 1 ? " carta disponible" : " cartas disponibles") + " · " + mine.length + " en total";
+      var vhBio = $("#vhBio");
+      if(v.bio){ vhBio.textContent = v.bio; vhBio.style.display = ""; }
+      else { vhBio.style.display = "none"; }
 
       var igBtn = $("#vhInstagram");
       if(v.instagram){ igBtn.style.display = ""; igBtn.href = "https://www.instagram.com/" + v.instagram; }
@@ -1220,9 +1294,11 @@
     if(currentUser && currentVendor){
       area.innerHTML =
         '<button class="btn btn-quiet" id="myListingsBtn" type="button">Hola, '+esc(currentVendor.store)+'</button>'+
+        '<button class="btn btn-ghost" id="editProfileBtn" type="button">Editar perfil</button>'+
         '<button class="btn btn-primary" id="navPublishBtn" type="button">Publicar carta</button>'+
         '<button class="btn btn-ghost" id="logoutBtn" type="button">Salir</button>';
       $("#myListingsBtn").addEventListener("click", function(){ setVendorFilter(currentVendor.id); });
+      $("#editProfileBtn").addEventListener("click", openProfileDialog);
       $("#navPublishBtn").addEventListener("click", openPublishDialog);
       $("#logoutBtn").addEventListener("click", function(){
         sb.auth.signOut().then(function(){
@@ -1294,7 +1370,7 @@
       }).then(function(r){
         if(r.error) throw r.error;
         currentUser = user;
-        currentVendor = { id:user.id, store:store, whatsapp:phone, region:region, instagram:instagram };
+        currentVendor = { id:user.id, store:store, whatsapp:phone, region:region, instagram:instagram, bio:null, avatar_url:null };
         allVendors.push(currentVendor);
         $("#registerForm").reset();
         $("#authDialog").close();
@@ -1439,6 +1515,94 @@
     });
   });
 
+  /* ---------- profile ---------- */
+  $("#profAvatar").addEventListener("change", function(e){
+    var file = e.target.files && e.target.files[0];
+    if(!file) return;
+    resizeImageToBlob(file).then(function(blob){
+      pendingAvatarBlob = blob;
+      avatarRemoved = false;
+      var url = URL.createObjectURL(blob);
+      $("#avatarPreviewWrap").innerHTML = '<img src="'+url+'" alt="Vista previa" />';
+      $("#removeAvatarBtn").style.display = "";
+    }).catch(function(){
+      toast("No se pudo procesar esa imagen, prueba con otra foto.");
+    });
+  });
+
+  $("#removeAvatarBtn").addEventListener("click", function(){
+    pendingAvatarBlob = null;
+    avatarRemoved = true;
+    $("#profAvatar").value = "";
+    $("#avatarPreviewWrap").innerHTML =
+      '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>';
+    $("#removeAvatarBtn").style.display = "none";
+  });
+
+  function openProfileDialog(){
+    if(!currentUser || !currentVendor) return;
+    $("#profileForm").reset();
+    pendingAvatarBlob = null;
+    avatarRemoved = false;
+    $("#profBio").value = currentVendor.bio || "";
+    if(currentVendor.avatar_url){
+      $("#avatarPreviewWrap").innerHTML = '<img src="'+esc(currentVendor.avatar_url)+'" alt="" />';
+      $("#removeAvatarBtn").style.display = "";
+    } else {
+      $("#avatarPreviewWrap").innerHTML =
+        '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>';
+      $("#removeAvatarBtn").style.display = "none";
+    }
+    $("#profileErr").textContent = "";
+    $("#profileDialog").showModal();
+  }
+
+  $("#profileForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var err = $("#profileErr");
+    err.textContent = "";
+    if(!currentUser || !currentVendor){ err.textContent = "Tienes que iniciar sesión."; return; }
+    var bio = $("#profBio").value.trim();
+
+    var btn = $("#profileSubmitBtn");
+    btn.disabled = true; btn.textContent = "Guardando…";
+
+    var uploadStep;
+    if(pendingAvatarBlob){
+      var path = currentUser.id + "/avatar-" + Date.now() + ".jpg";
+      uploadStep = sb.storage.from(BUCKET).upload(path, pendingAvatarBlob, { contentType:"image/jpeg" }).then(function(res){
+        if(res.error) throw res.error;
+        var pub = sb.storage.from(BUCKET).getPublicUrl(path);
+        return pub.data.publicUrl;
+      });
+    } else if(avatarRemoved){
+      uploadStep = Promise.resolve(null);
+    } else {
+      uploadStep = Promise.resolve(currentVendor.avatar_url || null);
+    }
+
+    uploadStep.then(function(avatarUrl){
+      return sb.from("vendors").update({
+        bio: bio || null, avatar_url: avatarUrl
+      }).eq("id", currentUser.id);
+    }).then(function(res){
+      if(res && res.error) throw res.error;
+      return loadVendors();
+    }).then(function(){
+      currentVendor = getVendor(currentUser.id) || currentVendor;
+      pendingAvatarBlob = null;
+      avatarRemoved = false;
+      $("#profileDialog").close();
+      toast("Perfil actualizado");
+      renderAll();
+      if(filters.vendorId === currentUser.id) setVendorFilter(currentUser.id);
+    }).catch(function(error){
+      err.textContent = error.message || "No se pudo guardar, intenta de nuevo.";
+    }).finally(function(){
+      btn.disabled = false; btn.textContent = "Guardar cambios";
+    });
+  });
+
   /* ---------- listing actions ---------- */
   function markSold(id){
     sb.from("listings").update({ status:"vendida" }).eq("id", id).then(function(res){
@@ -1491,6 +1655,10 @@
     $("#detailDesc").style.display = l.description ? "" : "none";
     $("#detailSellerName").textContent = v ? v.store : "Vendedor";
     $("#detailSellerRegion").textContent = v ? v.region : "";
+    $("#detailSellerAvatar").innerHTML = avatarInner(v);
+    var sBio = $("#detailSellerBio");
+    if(v && v.bio){ sBio.textContent = v.bio; sBio.style.display = ""; }
+    else { sBio.style.display = "none"; }
 
     var igBtn = $("#detailInstagram");
     if(v && v.instagram){ igBtn.style.display = ""; igBtn.href = "https://www.instagram.com/" + v.instagram; }
