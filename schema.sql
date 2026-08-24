@@ -161,3 +161,17 @@ create trigger listings_prevent_selffeature
 -- correspondiente → edita la fila a mano (eso sí corre con permisos de
 -- administrador y pasa el trigger), o hazlo desde una función de backend
 -- que use la clave "service_role" después de confirmar el pago.
+
+
+-- ================= PARTE 4: perfil de vendedor (foto y descripción) =================
+-- Agrega dos columnas nuevas a "vendors" para que cada vendedor pueda
+-- contar quién es (descripción) y subir una foto de perfil. No necesita
+-- un bucket nuevo: la foto de perfil se guarda en el mismo bucket
+-- "listing-photos" que ya existe, dentro de la carpeta del propio
+-- vendedor, así que las políticas de la Parte 2 ya la cubren.
+
+alter table public.vendors
+  add column if not exists bio text check (char_length(bio) <= 280);
+
+alter table public.vendors
+  add column if not exists avatar_url text;
