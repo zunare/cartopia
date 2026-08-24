@@ -1081,10 +1081,35 @@
 
     if(listings.length === 0){
       var hasAny = allListings.length > 0;
+      var isLoggedInVendor = !!(currentUser && currentVendor);
+      var isOwnVendorView = isLoggedInVendor && filters.vendorId === currentVendor.id;
+      var viewedVendor = filters.vendorId ? getVendor(filters.vendorId) : null;
+
+      var emptyTitle, emptyText, showBtn = false, btnLabel = "";
+      if(isOwnVendorView){
+        emptyTitle = "Todavía no tienes cartas publicadas";
+        emptyText = "Publica tu primera carta para que los compradores te encuentren.";
+        showBtn = true; btnLabel = "Publicar mi primera carta";
+      } else if(filters.vendorId && viewedVendor){
+        emptyTitle = "Este vendedor todavía no publica cartas";
+        emptyText = "Vuelve más adelante o explora otros catálogos.";
+      } else if(hasAny){
+        emptyTitle = "No hay cartas con esos filtros";
+        emptyText = "Prueba cambiando el deporte, la región o la búsqueda.";
+      } else if(isLoggedInVendor){
+        emptyTitle = "Todavía no tienes cartas publicadas";
+        emptyText = "Publica tu primera carta para que los compradores te encuentren.";
+        showBtn = true; btnLabel = "Publicar mi primera carta";
+      } else {
+        emptyTitle = "Todavía no hay cartas publicadas";
+        emptyText = "Sé el primer vendedor en publicar tu catálogo de cartas deportivas en Cartopia.";
+        showBtn = true; btnLabel = "Registrarme como vendedor";
+      }
+
       grid.innerHTML = '<div class="empty">'+
-        '<h3>'+(hasAny ? "No hay cartas con esos filtros" : "Todavía no hay cartas publicadas")+'</h3>'+
-        '<p>'+(hasAny ? "Prueba cambiando el deporte, la región o la búsqueda." : "Sé el primer vendedor en publicar tu catálogo de cartas deportivas en Cartopia.")+'</p>'+
-        (hasAny ? '' : '<button class="btn btn-primary" id="emptyCta" type="button">Registrarme como vendedor</button>')+
+        '<h3>'+emptyTitle+'</h3>'+
+        '<p>'+emptyText+'</p>'+
+        (showBtn ? '<button class="btn btn-primary" id="emptyCta" type="button">'+btnLabel+'</button>' : '')+
         '</div>';
       var cta = $("#emptyCta");
       if(cta) cta.addEventListener("click", function(){ openSellFlow(); });
