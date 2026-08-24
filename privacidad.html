@@ -5,6 +5,10 @@
 <title>Política de Privacidad — Cartopia</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="noindex" />
+<link rel="icon" href="favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" href="favicon-32.png" sizes="32x32" />
+<link rel="icon" type="image/png" href="favicon-16.png" sizes="16x16" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
 <script>
   (function(){
     try{
@@ -89,7 +93,8 @@
   article ul, article ol{padding-left:1.3em;}
   article li{margin-bottom:8px;}
   article strong{color:var(--ink);}
-  article table{width:100%; border-collapse:collapse; margin:var(--sp-4) 0; font-size:.92rem;}
+  .table-scroll{overflow-x:auto; margin:var(--sp-4) 0; -webkit-overflow-scrolling:touch;}
+  article table{width:100%; min-width:480px; border-collapse:collapse; margin:0; font-size:.92rem;}
   article th, article td{text-align:left; padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:top;}
   article th{color:var(--ink); font-weight:600; font-family:var(--font-mono); font-size:.78rem; text-transform:uppercase; letter-spacing:.04em;}
   article td{color:var(--ink-soft);}
@@ -127,17 +132,19 @@
 
     <article>
       <h2>1. Qué datos recopilamos</h2>
-      <table>
-        <tr><th>Dato</th><th>¿Para qué?</th><th>¿Es público?</th></tr>
-        <tr><td>Correo electrónico</td><td>Crear tu cuenta e iniciar sesión</td><td>No</td></tr>
-        <tr><td>Contraseña</td><td>Iniciar sesión (guardada cifrada por Supabase, nunca la vemos en texto plano)</td><td>No</td></tr>
-        <tr><td>Nombre de tienda / catálogo</td><td>Identificarte como vendedor</td><td>Sí</td></tr>
-        <tr><td>WhatsApp</td><td>Que los compradores te contacten por el botón de WhatsApp</td><td>Sí</td></tr>
-        <tr><td>Región</td><td>Filtro de ubicación en el marketplace</td><td>Sí</td></tr>
-        <tr><td>Instagram (opcional)</td><td>Que los compradores conozcan más tu catálogo</td><td>Sí</td></tr>
-        <tr><td>Fotos de las cartas</td><td>Mostrar tus publicaciones</td><td>Sí</td></tr>
-        <tr><td>Título, precio, deporte, descripción de cada publicación</td><td>Mostrar tus publicaciones</td><td>Sí</td></tr>
-      </table>
+      <div class="table-scroll">
+        <table>
+          <tr><th>Dato</th><th>¿Para qué?</th><th>¿Es público?</th></tr>
+          <tr><td>Correo electrónico</td><td>Crear tu cuenta e iniciar sesión</td><td>No</td></tr>
+          <tr><td>Contraseña</td><td>Iniciar sesión (guardada cifrada por Supabase, nunca la vemos en texto plano)</td><td>No</td></tr>
+          <tr><td>Nombre de tienda / catálogo</td><td>Identificarte como vendedor</td><td>Sí</td></tr>
+          <tr><td>WhatsApp</td><td>Que los compradores te contacten por el botón de WhatsApp</td><td>Sí</td></tr>
+          <tr><td>Región</td><td>Filtro de ubicación en el marketplace</td><td>Sí</td></tr>
+          <tr><td>Instagram (opcional)</td><td>Que los compradores conozcan más tu catálogo</td><td>Sí</td></tr>
+          <tr><td>Fotos de las cartas</td><td>Mostrar tus publicaciones</td><td>Sí</td></tr>
+          <tr><td>Título, precio, deporte, descripción de cada publicación</td><td>Mostrar tus publicaciones</td><td>Sí</td></tr>
+        </table>
+      </div>
       <p>No pedimos ni almacenamos datos de tarjetas, cuentas bancarias ni ningún medio de pago — Cartopia no procesa pagos.</p>
 
       <h2>2. Por qué algunos datos son públicos</h2>
