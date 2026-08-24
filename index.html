@@ -379,6 +379,27 @@
   .card .meta .seller{font-weight:600; color:var(--ink-soft); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:60%;}
   .card .ships{display:inline-flex; align-items:center; gap:4px; font-size:.66rem; color:var(--accent-strong); font-weight:600;}
 
+  @media (max-width:640px){
+    .grid{ grid-template-columns:repeat(2, 1fr); gap:var(--sp-3); }
+    .vendor-strip{ grid-template-columns:repeat(2, 1fr); gap:var(--sp-3); }
+    .card .body{ padding:var(--sp-2) var(--sp-3) var(--sp-3); gap:4px; }
+    .card .title{ font-size:.8rem; min-height:2.1em; }
+    .card .price{ font-size:.98rem; }
+    .card .badge{ font-size:.56rem; padding:3px 7px; top:7px; left:7px; }
+    .card .sport-tag{ font-size:.54rem; padding:3px 6px; top:7px; right:7px; }
+    .card .meta{ font-size:.66rem; }
+    .card .owner-controls{ bottom:6px; right:6px; gap:4px; }
+    .card .owner-controls button{ font-size:.6rem; padding:4px 6px; }
+    .vendor-chip{ padding:var(--sp-3); }
+    .vendor-chip .vname{ font-size:.9rem; }
+  }
+  @media (max-width:380px){
+    .grid{ gap:var(--sp-2); }
+    .vendor-strip{ gap:var(--sp-2); }
+    .card .badge{ font-size:.5rem; padding:2px 5px; top:5px; left:5px; }
+    .card .sport-tag{ font-size:.48rem; padding:2px 5px; top:5px; right:5px; }
+  }
+
   .empty{
     grid-column:1/-1; text-align:center; padding:var(--sp-8) var(--sp-5);
     border:1px dashed var(--border); border-radius:var(--radius-lg); color:var(--ink-soft);
