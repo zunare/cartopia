@@ -846,6 +846,10 @@
         <label for="profBio">Descripción de tu catálogo (opcional)</label>
         <textarea id="profBio" maxlength="280" placeholder="Cuéntales a los compradores qué tipo de cartas vendes, hace cuánto coleccionas, etc."></textarea>
       </div>
+      <div class="field-group">
+        <label for="profInstagram">Instagram (opcional)</label>
+        <input type="text" id="profInstagram" maxlength="30" placeholder="tu.usuario" />
+      </div>
       <div class="err" id="profileErr"></div>
       <button class="btn btn-primary btn-block" type="submit" id="profileSubmitBtn">Guardar cambios</button>
     </form>
@@ -1562,6 +1566,7 @@
     pendingAvatarBlob = null;
     avatarRemoved = false;
     $("#profBio").value = currentVendor.bio || "";
+    $("#profInstagram").value = currentVendor.instagram || "";
     if(currentVendor.avatar_url){
       $("#avatarPreviewWrap").innerHTML = '<img src="'+esc(currentVendor.avatar_url)+'" alt="" />';
       $("#removeAvatarBtn").style.display = "";
@@ -1580,6 +1585,7 @@
     err.textContent = "";
     if(!currentUser || !currentVendor){ err.textContent = "Tienes que iniciar sesión."; return; }
     var bio = $("#profBio").value.trim();
+    var instagram = $("#profInstagram").value.trim().replace(/^@/, "");
 
     var btn = $("#profileSubmitBtn");
     btn.disabled = true; btn.textContent = "Guardando…";
@@ -1600,7 +1606,7 @@
 
     withTimeout(uploadStep.then(function(avatarUrl){
       return sb.from("vendors").update({
-        bio: bio || null, avatar_url: avatarUrl
+        bio: bio || null, avatar_url: avatarUrl, instagram: instagram || null
       }).eq("id", currentUser.id);
     }).then(function(res){
       if(res && res.error) throw res.error;
