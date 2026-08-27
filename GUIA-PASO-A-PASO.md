@@ -67,13 +67,44 @@ Cuando te mande una versión nueva de algún archivo más adelante, solo tienes 
 
 1. Para un dominio `.cl`, entra a **[nic.cl](https://www.nic.cl)**. El valor de inscripción/renovación anual es de **$9.990 CLP** (según la tarifa vigente de NIC Chile — revisa el precio actualizado ahí mismo antes de pagar). Vas a necesitar tu RUT para inscribirlo.
 2. Una vez comprado, entra a tu proyecto en Vercel → **Settings** → **Domains** → escribe tu dominio (ej. `cartopia.cl`) → **Add**.
-3. Vercel te va a mostrar los registros DNS exactos que hay que agregar — normalmente un registro **A** apuntando a `76.76.21.21` para `cartopia.cl`, y un registro **CNAME** para `www` apuntando a la dirección que Vercel te indique en pantalla. **Usa siempre los valores que veas en tu propio panel de Vercel en ese momento**, no los de este documento ni los de otra guía, porque a veces cambian.
-4. Entra al panel de NIC Chile donde administras tu dominio y agrega ahí esos mismos registros.
-5. Espera unas horas (a veces hasta 24) a que el cambio se propague. Cuando esté listo, Vercel emite el certificado de seguridad (https) solo, y tu marketplace va a responder directo en `cartopia.cl`.
+3. Vercel te va a proponer conectar el dominio de dos maneras posibles — usa **una sola**, no las dos:
+
+   **Opción A — Nameservers (recomendada, la más simple):** le entregas a Vercel el control completo del DNS de tu dominio. Si Vercel te muestra estos dos valores, es esta opción:
+   - `ns1.vercel-dns.com`
+   - `ns2.vercel-dns.com`
+
+   Para agregarlos: entra a **[clientes.nic.cl](https://clientes.nic.cl/registrar/logon.do)** → inicia sesión → haz clic en tu dominio → busca la sección **"Servidores de nombre (DNS)"** → reemplaza lo que haya por esos dos valores → guarda con el botón de actualizar. Con esto Vercel configura todo lo demás (dominio raíz, `www`, certificado https) automáticamente, sin más pasos.
+
+   **Opción B — Registro A + CNAME:** si prefieres no cambiar los nameservers (por ejemplo porque ya tienes correos u otros servicios usando el DNS de NIC), Vercel te va a mostrar en su lugar un registro **A** para `cartopia.cl` y un registro **CNAME** para `www`. **Usa siempre los valores exactos que veas en tu propio panel de Vercel en ese momento** (pueden no ser siempre los mismos), y agrégalos en la sección de registros DNS de NIC Chile (distinta a la de "Servidores de nombre").
+
+   Nota: si más adelante quieres un correo tipo `contacto@cartopia.cl`, con la Opción A esos registros (MX) se agregan desde el panel de Vercel; con la Opción B se agregan en NIC como cualquier otro registro.
+4. Espera unas horas (a veces hasta 24) a que el cambio se propague. Cuando esté listo, Vercel emite el certificado de seguridad (https) solo, y tu marketplace va a responder directo en `cartopia.cl`.
 
 ---
 
-## Parte 6 (para más adelante) — Empezar a cobrar
+## Parte 6 — Activar la foto de perfil y la descripción de los vendedores
+
+El sitio ya trae listo que cada vendedor pueda subir una foto de perfil y escribir una descripción de su catálogo (se edita desde el botón **"Editar perfil"** una vez que inician sesión). Para que funcione falta un paso único en la base de datos:
+
+1. En Supabase, entra a **SQL Editor** → **New query**.
+2. Abre `schema.sql`, copia la sección que dice **`-- ================= PARTE 4`** (dos líneas `alter table`), pégala y presiona **Run**.
+3. Listo, no hace falta crear ningún bucket nuevo: la foto de perfil se guarda en el mismo lugar que las fotos de las cartas.
+
+---
+
+## Parte 7 — Activar las subastas
+
+El sitio ya trae armado el sistema de subastas: al publicar una carta, el vendedor puede elegir "Subasta" en vez de precio fijo (define el precio piso, el incremento mínimo y cuántos días dura), cualquier visitante puede pujar sin necesidad de crear una cuenta, y el vendedor ve el historial completo de pujas (con los datos de contacto de cada postor) al abrir su propia carta. Para activarlo falta un paso único en la base de datos:
+
+1. En Supabase, entra a **SQL Editor** → **New query**.
+2. Abre `schema.sql`, copia toda la sección que dice **`-- ================= PARTE 5`** (desde ahí hasta el final del archivo), pégala y presiona **Run**.
+3. Listo. No hace falta crear ningún bucket nuevo ni ningún servidor aparte: el cierre de cada subasta se calcula solo, comparando la hora actual con la hora de término guardada.
+
+Algo a tener en cuenta: como no se pide inicio de sesión para pujar, cualquiera puede escribir un nombre y datos de contacto falsos — es una limitación inherente a no pedir cuenta para pujar, no algo que dependa de la configuración. El sitio sí exige que el WhatsApp tenga formato chileno válido, para filtrar al menos los casos más obvios.
+
+---
+
+## Parte 8 (para más adelante) — Empezar a cobrar
 
 El sitio ya viene con lo básico armado para monetizar, pero **apagado** — hoy nadie ve límites ni botones de pago. Cuando quieras activarlo:
 
