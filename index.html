@@ -375,6 +375,8 @@
     padding:4px 9px; border-radius:5px; background:var(--accent); color:var(--on-accent);
   }
   .card.is-sold .badge{background:var(--sold-bg); color:var(--sold-ink);}
+  .card.is-auction-live .badge{background:var(--accent-strong);}
+  .card.is-auction-over .badge{background:var(--sold-bg); color:var(--sold-ink);}
   .card .sport-tag{
     position:absolute; top:10px; right:10px; font-size:.62rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
     padding:4px 8px; border-radius:5px; color:#fff;
@@ -390,6 +392,8 @@
   .card.is-sold .title{color:var(--ink-faint);}
   .card .price{font-family:var(--font-mono); font-variant-numeric:tabular-nums; font-weight:600; font-size:1.15rem;}
   .card.is-sold .price{color:var(--sold-ink); text-decoration:line-through; text-decoration-color:var(--ink-faint);}
+  .price-label{font-size:.7rem; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.03em; font-weight:700;}
+  .auction-countdown{font-family:var(--font-mono); font-size:.72rem; color:var(--ink-faint); font-weight:600;}
   .card .meta{display:flex; justify-content:space-between; align-items:center; font-size:.74rem; color:var(--ink-faint); margin-top:auto; padding-top:6px; border-top:1px solid var(--border);}
   .card .meta .seller{font-weight:600; color:var(--ink-soft); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:60%;}
   .card .ships{display:inline-flex; align-items:center; gap:4px; font-size:.66rem; color:var(--accent-strong); font-weight:600;}
@@ -506,6 +510,31 @@
   .detail-price-row{display:flex; align-items:center; justify-content:space-between; gap:var(--sp-3);}
   .detail-price{font-family:var(--font-mono); font-size:1.8rem; font-weight:600;}
   .wa-note{font-size:.78rem; color:var(--ink-faint); text-align:center; margin-top:8px;}
+
+  .auction-meta{display:flex; align-items:center; gap:var(--sp-3); margin:var(--sp-2) 0 var(--sp-3); flex-wrap:wrap;}
+  .auction-badge{background:var(--accent-strong); color:var(--on-accent); font-weight:700; font-size:.7rem; text-transform:uppercase; letter-spacing:.04em; padding:4px 10px; border-radius:5px;}
+  .auction-timer{font-family:var(--font-mono); font-size:.86rem; color:var(--ink-soft); font-weight:600;}
+  .bid-note{font-size:.82rem; color:var(--ink-faint); background:var(--surface-2); border-radius:var(--radius-sm); padding:10px 12px; margin:var(--sp-3) 0;}
+  .bid-hint{font-size:.74rem; color:var(--ink-faint); margin-top:-2px;}
+  .winner-box{background:var(--gold-soft); border-radius:var(--radius-md); padding:var(--sp-4); margin:var(--sp-3) 0; text-align:center;}
+  .winner-box-label{font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--gold);}
+  .winner-box-name{font-weight:700; font-size:1.05rem; margin:4px 0 var(--sp-3);}
+  .bid-history{margin-top:var(--sp-4);}
+  .bid-history h4{font-size:.85rem; margin:0 0 var(--sp-2); color:var(--ink-soft);}
+  .bid-row{display:flex; justify-content:space-between; align-items:flex-start; gap:var(--sp-2); padding:8px 0; border-bottom:1px solid var(--border); font-size:.86rem;}
+  .bid-row > div{min-width:0;}
+  .bid-row > div:first-child{flex:1 1 auto; overflow-wrap:break-word;}
+  .bid-row > div:last-child{flex:none;}
+  .bid-row:last-child{border-bottom:none;}
+  .bid-row .bname{font-weight:600;}
+  .bid-row .bamount{font-family:var(--font-mono); font-weight:700; color:var(--accent-strong); text-align:right;}
+  .bid-row .btime{font-size:.72rem; color:var(--ink-faint); text-align:right;}
+  .bid-contact{font-size:.76rem; color:var(--ink-faint); margin-top:2px;}
+  .bid-contact a{color:var(--accent-strong); font-weight:600;}
+  .winner-tag, .leading-tag{font-size:.66rem; font-weight:700; padding:2px 6px; border-radius:4px; margin-left:4px; white-space:nowrap;}
+  .winner-tag{background:var(--gold-soft); color:var(--gold);}
+  .leading-tag{background:var(--surface-2); color:var(--accent-strong);}
+  .no-bids{color:var(--ink-faint); font-size:.86rem; padding:var(--sp-2) 0;}
   .seller-box{background:var(--surface-2); border-radius:var(--radius-md); padding:var(--sp-4); margin-top:var(--sp-4);}
   .seller-box .srow{display:flex; align-items:center; gap:var(--sp-3); margin-bottom:var(--sp-3);}
   .seller-box .savatar{
@@ -655,7 +684,9 @@
           <option value="recent">Más recientes</option>
           <option value="price-asc">Menor precio</option>
           <option value="price-desc">Mayor precio</option>
+          <option value="ending-soon">Terminan pronto</option>
         </select>
+        <button type="button" class="chip" id="onlyAuctionsChip">Solo subastas</button>
       </div>
       <div class="chiprow" id="sportChips" style="margin-bottom:var(--sp-4);"></div>
       <div class="count-row"><span id="resultCount">0 cartas</span><span id="filterSummary"></span></div>
@@ -784,6 +815,13 @@
   <div class="dialog-body">
     <form id="publishForm" novalidate>
       <div class="field-group">
+        <label>Tipo de publicación</label>
+        <div class="tabs" id="pubTypeTabs">
+          <button type="button" class="tab active" data-type="fixed">Precio fijo</button>
+          <button type="button" class="tab" data-type="auction">Subasta</button>
+        </div>
+      </div>
+      <div class="field-group">
         <label for="pubPhoto">Foto de la carta</label>
         <div class="photo-drop" id="photoDrop">
           <div id="photoPreviewWrap">
@@ -797,15 +835,42 @@
         <label for="pubTitle">Título de la carta</label>
         <input type="text" id="pubTitle" maxlength="70" placeholder='Ej: Alexis Sánchez Panini Prizm Rookie' required />
       </div>
-      <div class="two-col">
-        <div class="field-group">
-          <label for="pubSport">Deporte</label>
-          <select id="pubSport" required></select>
+      <div class="field-group">
+        <label for="pubSport">Deporte</label>
+        <select id="pubSport" required></select>
+      </div>
+      <div class="field-group" id="pubPriceGroup">
+        <label for="pubPrice">Precio (CLP)</label>
+        <input type="number" id="pubPrice" min="500" max="10000000" step="500" placeholder="15000" />
+      </div>
+      <div id="pubAuctionFields" style="display:none;">
+        <div class="two-col">
+          <div class="field-group">
+            <label for="pubFloor">Precio piso (CLP)</label>
+            <input type="number" id="pubFloor" min="500" max="10000000" step="500" placeholder="15000" />
+          </div>
+          <div class="field-group">
+            <label for="pubIncrement">Incremento mínimo</label>
+            <select id="pubIncrement">
+              <option value="500">$500</option>
+              <option value="1000" selected>$1.000</option>
+              <option value="1500">$1.500</option>
+              <option value="2000">$2.000</option>
+              <option value="5000">$5.000</option>
+              <option value="10000">$10.000</option>
+            </select>
+          </div>
         </div>
         <div class="field-group">
-          <label for="pubPrice">Precio (CLP)</label>
-          <input type="number" id="pubPrice" min="500" max="10000000" step="500" placeholder="15000" required />
+          <label for="pubDuration">Duración de la subasta</label>
+          <select id="pubDuration">
+            <option value="1">1 día</option>
+            <option value="3" selected>3 días</option>
+            <option value="5">5 días</option>
+            <option value="7">7 días</option>
+          </select>
         </div>
+        <p class="hint">La subasta empieza apenas publiques. No hace falta iniciar sesión para pujar. Si alguien puja en los últimos 2 minutos, el cierre se estira un poco para que nadie la "robe" al final.</p>
       </div>
       <div class="field-group">
         <label for="pubRegion">Región donde coordinas la entrega</label>
@@ -868,16 +933,62 @@
       <div>
         <span class="eyebrow" id="detailSport"></span>
         <h3 id="detailTitle" style="font-family:var(--font-body); font-size:1.2rem; margin:6px 0 10px;"></h3>
+        <div class="price-label" id="detailPriceLabel" style="display:none;"></div>
         <div class="detail-price-row">
           <span class="detail-price" id="detailPrice"></span>
           <span class="badge" id="detailStatus" style="position:static;"></span>
         </div>
         <p id="detailDesc" style="color:var(--ink-soft); font-size:.9rem; margin:var(--sp-3) 0 0;"></p>
-        <button class="btn btn-wa btn-block" id="detailWaBtn" type="button" style="margin-top:var(--sp-4);">
-          <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0012.05 4a8.94 8.94 0 00-7.75 13.4L3 21l3.7-1.28a8.9 8.9 0 004.33 1.12h.01a8.94 8.94 0 006.56-15zm-5.55 13.7a7.4 7.4 0 01-3.78-1.03l-.27-.16-2.79.96.94-2.72-.18-.28a7.42 7.42 0 1113.55-4.15 7.44 7.44 0 01-7.47 7.38zm4.08-5.56c-.22-.11-1.32-.65-1.53-.73-.2-.08-.35-.11-.5.11-.15.22-.57.73-.7.88-.13.15-.26.16-.48.05-.22-.11-.94-.35-1.79-1.11-.66-.59-1.11-1.32-1.24-1.54-.13-.22-.01-.34.1-.45.1-.1.22-.26.33-.39.11-.13.15-.22.22-.37.07-.15.04-.28-.02-.39-.06-.11-.5-1.2-.68-1.65-.18-.43-.36-.37-.5-.38-.13-.01-.28-.01-.43-.01a.83.83 0 00-.6.28c-.2.22-.79.77-.79 1.87s.81 2.17.92 2.32c.11.15 1.6 2.45 3.89 3.43.54.24.97.38 1.3.48.55.17 1.05.15 1.44.09.44-.07 1.32-.54 1.51-1.06.19-.52.19-.96.13-1.06-.05-.09-.2-.15-.42-.26z"/></svg>
-          Consultar por WhatsApp
-        </button>
-        <p class="wa-note">Se abre WhatsApp con un mensaje sobre esta carta.</p>
+
+        <div id="fixedPriceActions">
+          <button class="btn btn-wa btn-block" id="detailWaBtn" type="button" style="margin-top:var(--sp-4);">
+            <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0012.05 4a8.94 8.94 0 00-7.75 13.4L3 21l3.7-1.28a8.9 8.9 0 004.33 1.12h.01a8.94 8.94 0 006.56-15zm-5.55 13.7a7.4 7.4 0 01-3.78-1.03l-.27-.16-2.79.96.94-2.72-.18-.28a7.42 7.42 0 1113.55-4.15 7.44 7.44 0 01-7.47 7.38zm4.08-5.56c-.22-.11-1.32-.65-1.53-.73-.2-.08-.35-.11-.5.11-.15.22-.57.73-.7.88-.13.15-.26.16-.48.05-.22-.11-.94-.35-1.79-1.11-.66-.59-1.11-1.32-1.24-1.54-.13-.22-.01-.34.1-.45.1-.1.22-.26.33-.39.11-.13.15-.22.22-.37.07-.15.04-.28-.02-.39-.06-.11-.5-1.2-.68-1.65-.18-.43-.36-.37-.5-.38-.13-.01-.28-.01-.43-.01a.83.83 0 00-.6.28c-.2.22-.79.77-.79 1.87s.81 2.17.92 2.32c.11.15 1.6 2.45 3.89 3.43.54.24.97.38 1.3.48.55.17 1.05.15 1.44.09.44-.07 1.32-.54 1.51-1.06.19-.52.19-.96.13-1.06-.05-.09-.2-.15-.42-.26z"/></svg>
+            Consultar por WhatsApp
+          </button>
+          <p class="wa-note">Se abre WhatsApp con un mensaje sobre esta carta.</p>
+        </div>
+
+        <div id="detailAuctionBox" style="display:none;">
+          <div class="auction-meta">
+            <span class="auction-badge">Subasta</span>
+            <span class="auction-timer" id="auctionTimer"></span>
+          </div>
+          <div id="bidFormWrap">
+            <div class="field-group">
+              <label for="bidAmount">Tu puja (CLP)</label>
+              <input type="number" id="bidAmount" step="1" />
+              <p class="bid-hint" id="bidMinHint"></p>
+            </div>
+            <div class="two-col">
+              <div class="field-group">
+                <label for="bidName">Nombre y apellido</label>
+                <input type="text" id="bidName" maxlength="60" />
+              </div>
+              <div class="field-group">
+                <label for="bidEmail">Correo</label>
+                <input type="email" id="bidEmail" placeholder="tu@correo.com" />
+              </div>
+            </div>
+            <div class="two-col">
+              <div class="field-group">
+                <label for="bidWhatsapp">WhatsApp</label>
+                <input type="tel" id="bidWhatsapp" placeholder="+56 9 1234 5678" />
+              </div>
+              <div class="field-group">
+                <label for="bidInstagram">Instagram (opcional)</label>
+                <input type="text" id="bidInstagram" placeholder="tu.usuario" />
+              </div>
+            </div>
+            <div class="err" id="bidErr"></div>
+            <button class="btn btn-primary btn-block" id="bidSubmitBtn" type="button">Pujar</button>
+          </div>
+          <p class="bid-note" id="bidClosedNote" style="display:none;"></p>
+          <div id="auctionWinnerBox" style="display:none;"></div>
+          <div class="bid-history">
+            <h4>Historial de pujas</h4>
+            <div id="bidHistoryList"></div>
+          </div>
+        </div>
 
         <div class="seller-box">
           <div class="srow">
@@ -898,6 +1009,7 @@
           <button class="btn btn-quiet btn-sm" id="detailMarkSold" type="button">Marcar como vendida</button>
           <button class="btn btn-quiet btn-sm" id="detailFeature" type="button" style="display:none;">Destacar</button>
           <button class="btn btn-danger btn-sm" id="detailDelete" type="button">Eliminar publicación</button>
+          <p class="bid-hint" id="deleteBlockedHint" style="display:none;">No puedes eliminar una subasta que ya tiene pujas.</p>
         </div>
 
         <p class="disclaimer">Cartopia funciona como vidriera y no interviene en pagos, envíos ni garantías. Este vendedor actúa de forma independiente.</p>
@@ -971,6 +1083,25 @@
     return digits;
   }
   function isValidPhone(digits){ return /^56\d{9}$/.test(digits); }
+  function isAuctionOver(l){
+    return !!(l && l.listing_type === "auction" && l.auction_ends_at && new Date(l.auction_ends_at).getTime() <= Date.now());
+  }
+  function auctionCountdownText(endsAt){
+    if(!endsAt) return "";
+    var diff = endsAt.getTime() - Date.now();
+    if(diff <= 0) return "Subasta finalizada";
+    var mins = Math.floor(diff / 60000);
+    var days = Math.floor(mins / 1440);
+    var hours = Math.floor((mins % 1440) / 60);
+    var m = mins % 60;
+    if(days > 0) return "Termina en " + days + "d " + hours + "h";
+    if(hours > 0) return "Termina en " + hours + "h " + m + "m";
+    if(mins > 0) return "Termina en " + mins + " min";
+    return "Termina en menos de un minuto";
+  }
+  function minNextBid(l){
+    return l.bid_count > 0 ? (l.price + l.min_increment) : l.floor_price;
+  }
   function vendorInitial(v){ return esc((v && v.store ? v.store : "?").trim().charAt(0).toUpperCase()); }
   function avatarInner(v){ return (v && v.avatar_url) ? '<img src="'+esc(v.avatar_url)+'" alt="" />' : vendorInitial(v); }
   function withTimeout(promise, ms){
@@ -1014,7 +1145,7 @@
   var currentVendor = null; // row from public.vendors
   var allListings = [];     // cached, each with .vendor joined
   var allVendors = [];
-  var filters = { search:"", sport:"Todos", region:"all", sort:"recent", vendorId:null };
+  var filters = { search:"", sport:"Todos", region:"all", sort:"recent", vendorId:null, onlyAuctions:false };
   var pendingBlob = null;
   var pendingAvatarBlob = null;
   var avatarRemoved = false;
@@ -1090,6 +1221,16 @@
         });
       }).catch(function(){});
   }
+  function loadBidsPublic(listingId){
+    if(!sb) return Promise.resolve([]);
+    return sb.from("bids_public").select("*").eq("listing_id", listingId).order("created_at", { ascending:false })
+      .then(function(res){ return res.data || []; }).catch(function(){ return []; });
+  }
+  function loadBidsFull(listingId){
+    if(!sb) return Promise.resolve([]);
+    return sb.from("bids").select("*").eq("listing_id", listingId).order("created_at", { ascending:false })
+      .then(function(res){ return res.data || []; }).catch(function(){ return []; });
+  }
   function loadSession(){
     if(!sb) return Promise.resolve();
     return sb.auth.getSession().then(function(res){
@@ -1142,6 +1283,7 @@
 
   function matchesFilters(l){
     if(filters.vendorId && l.vendor_id !== filters.vendorId) return false;
+    if(filters.onlyAuctions && l.listing_type !== "auction") return false;
     if(filters.sport !== "Todos" && l.sport !== filters.sport) return false;
     if(filters.region !== "all" && l.region !== filters.region) return false;
     if(filters.search){
@@ -1156,6 +1298,11 @@
     listings.sort(function(a,b){
       if(filters.sort === "price-asc") return a.price - b.price;
       if(filters.sort === "price-desc") return b.price - a.price;
+      if(filters.sort === "ending-soon"){
+        var ae = (a.listing_type === "auction" && a.auction_ends_at) ? new Date(a.auction_ends_at).getTime() : Infinity;
+        var be = (b.listing_type === "auction" && b.auction_ends_at) ? new Date(b.auction_ends_at).getTime() : Infinity;
+        return ae - be;
+      }
       return new Date(b.created_at) - new Date(a.created_at);
     });
     if(filters.sort === "recent"){
@@ -1214,17 +1361,24 @@
       var color = SPORT_COLORS[l.sport] || "#5B6470";
       var isMine = currentUser && currentUser.id === l.vendor_id;
       var featured = isFeatured(l);
+      var isAuction = l.listing_type === "auction";
+      var auctionOver = isAuctionOver(l);
+      var canDelete = !(isAuction && l.bid_count > 0);
+      var showSoldBtn = !sold && (!isAuction || auctionOver);
       var ownBtns = isMine ? (
         '<div class="owner-controls">' +
-        (sold ? '' : '<button type="button" data-act="sold" data-id="'+esc(l.id)+'">Vendida</button>') +
+        (showSoldBtn ? '<button type="button" data-act="sold" data-id="'+esc(l.id)+'">Vendida</button>' : '') +
         (MONETIZATION_ENABLED && !sold ? '<button type="button" data-act="feature" data-id="'+esc(l.id)+'">'+(featured?"Destacada ★":"Destacar")+'</button>' : '') +
-        '<button type="button" data-act="del" data-id="'+esc(l.id)+'">Eliminar</button>' +
+        (canDelete ? '<button type="button" data-act="del" data-id="'+esc(l.id)+'">Eliminar</button>' : '') +
         '</div>'
       ) : '';
-      return '<div class="card'+(sold?' is-sold':'')+(featured?' is-featured':'')+'" data-id="'+esc(l.id)+'">'+
+      var badgeText = sold ? "Vendida" : (isAuction ? (auctionOver ? "Finalizada" : "Subasta") : "Disponible");
+      var cardClasses = 'card' + (sold?' is-sold':'') + (featured?' is-featured':'') +
+        (isAuction && !sold ? (auctionOver ? ' is-auction-over' : ' is-auction-live') : '');
+      return '<div class="'+cardClasses+'" data-id="'+esc(l.id)+'">'+
         '<div class="media">'+
           '<span class="sport-bar" style="background:'+color+'"></span>'+
-          '<span class="badge">'+(sold ? "Vendida" : "Disponible")+'</span>'+
+          '<span class="badge">'+badgeText+'</span>'+
           '<span class="sport-tag" style="background:'+color+'">'+esc(l.sport)+'</span>'+
           (l.photo_url ? '<img src="'+l.photo_url+'" alt="'+esc(l.title)+'" loading="lazy">' : '')+
           ownBtns+
@@ -1232,10 +1386,12 @@
         '<div class="body">'+
           (featured ? '<span class="featured-flag">★ Destacada</span>' : '')+
           '<div class="title">'+esc(l.title)+'</div>'+
+          (isAuction ? '<div class="price-label">'+(l.bid_count>0?'Puja actual':'Precio piso')+'</div>' : '')+
           '<div class="price">'+formatCLP(l.price)+'</div>'+
+          (isAuction ? '<div class="auction-countdown" data-ends="'+esc(l.auction_ends_at||"")+'"'+(auctionOver?' data-over="1"':'')+'>'+auctionCountdownText(l.auction_ends_at?new Date(l.auction_ends_at):null)+'</div>' : '')+
           '<div class="meta">'+
             '<span class="seller">'+esc(v ? v.store : "Vendedor")+'</span>'+
-            (l.ships ? '<span class="ships">Envíos a Chile</span>' : '<span>'+timeAgo(l.created_at)+'</span>')+
+            (isAuction ? '<span>'+(l.bid_count||0)+(l.bid_count===1?' puja':' pujas')+'</span>' : (l.ships ? '<span class="ships">Envíos a Chile</span>' : '<span>'+timeAgo(l.created_at)+'</span>'))+
           '</div>'+
         '</div>'+
       '</div>';
@@ -1470,10 +1626,25 @@
     });
   }
 
+  var pubType = "fixed";
+  function setPubType(type){
+    pubType = type;
+    $all(".tab", $("#pubTypeTabs")).forEach(function(t){ t.classList.toggle("active", t.getAttribute("data-type") === type); });
+    $("#pubPriceGroup").style.display = type === "fixed" ? "" : "none";
+    $("#pubAuctionFields").style.display = type === "auction" ? "" : "none";
+    $("#publishSubmitBtn").textContent = type === "auction" ? "Publicar subasta" : "Publicar carta";
+  }
+  $("#pubTypeTabs").addEventListener("click", function(e){
+    var btn = e.target.closest(".tab");
+    if(!btn) return;
+    setPubType(btn.getAttribute("data-type"));
+  });
+
   function openPublishDialog(){
     if(!currentUser || !currentVendor){ openAuthDialog("register"); return; }
     $("#publishForm").reset();
     pendingBlob = null;
+    setPubType("fixed");
     $("#photoPreviewWrap").innerHTML =
       '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--ink-faint)"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5.5-5-5 5-2-2L3 18"/></svg><p>Tocá para subir una foto (se optimiza automáticamente)</p>';
     $("#publishErr").textContent = "";
@@ -1488,15 +1659,30 @@
     if(!currentUser){ err.textContent = "Tienes que registrarte primero."; return; }
     var title = $("#pubTitle").value.trim();
     var sport = $("#pubSport").value;
-    var price = Number($("#pubPrice").value);
     var region = $("#pubRegion").value;
     var ships = $("#pubShips").checked;
     var desc = $("#pubDesc").value.trim();
+    var isAuction = pubType === "auction";
+
+    var price, floor, increment, days;
+    if(isAuction){
+      floor = Number($("#pubFloor").value);
+      increment = Number($("#pubIncrement").value);
+      days = Number($("#pubDuration").value);
+    } else {
+      price = Number($("#pubPrice").value);
+    }
 
     if(title.length < 3){ err.textContent = "Escribe un título para la carta."; return; }
     if(!pendingBlob){ err.textContent = "Subí una foto de la carta."; return; }
-    if(!price || price < 500){ err.textContent = "Ingresa un precio válido en pesos chilenos."; return; }
     if(!region){ err.textContent = "Selecciona una región."; return; }
+    if(isAuction){
+      if(!floor || floor < 500){ err.textContent = "Ingresa un precio piso válido en pesos chilenos."; return; }
+      if(!increment){ err.textContent = "Selecciona un incremento mínimo."; return; }
+      if(!days){ err.textContent = "Selecciona la duración de la subasta."; return; }
+    } else {
+      if(!price || price < 500){ err.textContent = "Ingresa un precio válido en pesos chilenos."; return; }
+    }
 
     if(MONETIZATION_ENABLED && !isProVendor(currentVendor)){
       var activeCount = allListings.filter(function(l){
@@ -1516,13 +1702,25 @@
       if(res.error) throw res.error;
       var pub = sb.storage.from(BUCKET).getPublicUrl(path);
       var photoUrl = pub.data.publicUrl;
-      return sb.from("listings").insert({
-        vendor_id: currentUser.id, title: title, sport: sport, price: price,
+      var payload = {
+        vendor_id: currentUser.id, title: title, sport: sport,
         region: region, ships: ships, description: desc || null, photo_url: photoUrl, status: "disponible"
-      });
+      };
+      if(isAuction){
+        payload.listing_type = "auction";
+        payload.price = floor;
+        payload.floor_price = floor;
+        payload.min_increment = increment;
+        payload.auction_ends_at = new Date(Date.now() + days * 86400000).toISOString();
+        payload.bid_count = 0;
+      } else {
+        payload.listing_type = "fixed";
+        payload.price = price;
+      }
+      return sb.from("listings").insert(payload);
     }).then(function(res){
       if(res && res.error) throw res.error;
-      toast("¡Carta publicada!");
+      toast(isAuction ? "¡Subasta publicada!" : "¡Carta publicada!");
       $("#publishForm").reset();
       pendingBlob = null;
       $("#publishDialog").close();
@@ -1532,7 +1730,7 @@
     }), 30000).catch(function(error){
       err.textContent = error.message || "No se pudo publicar, intenta de nuevo.";
     }).finally(function(){
-      btn.disabled = false; btn.textContent = "Publicar carta";
+      btn.disabled = false; btn.textContent = isAuction ? "Publicar subasta" : "Publicar carta";
     });
   });
 
@@ -1670,10 +1868,17 @@
     $("#detailSport").textContent = l.sport + (l.ships ? " · Envíos a todo Chile" : "");
     $("#detailTitle").textContent = l.title;
     $("#detailPrice").textContent = formatCLP(l.price);
+    var isAuction = l.listing_type === "auction";
+    var auctionOver = isAuctionOver(l);
+    var isMine = currentUser && currentUser.id === l.vendor_id;
+    var priceLabel = $("#detailPriceLabel");
+    if(isAuction){ priceLabel.textContent = l.bid_count>0 ? "Puja actual" : "Precio piso"; priceLabel.style.display = ""; }
+    else { priceLabel.style.display = "none"; }
     var statusEl = $("#detailStatus");
-    statusEl.textContent = sold ? "Vendida" : "Disponible";
-    statusEl.style.background = sold ? "var(--sold-bg)" : "var(--accent)";
-    statusEl.style.color = sold ? "var(--sold-ink)" : "var(--on-accent)";
+    if(sold){ statusEl.textContent = "Vendida"; statusEl.style.background = "var(--sold-bg)"; statusEl.style.color = "var(--sold-ink)"; }
+    else if(isAuction && auctionOver){ statusEl.textContent = "Finalizada"; statusEl.style.background = "var(--sold-bg)"; statusEl.style.color = "var(--sold-ink)"; }
+    else if(isAuction){ statusEl.textContent = "Subasta"; statusEl.style.background = "var(--accent-strong)"; statusEl.style.color = "var(--on-accent)"; }
+    else { statusEl.textContent = "Disponible"; statusEl.style.background = "var(--accent)"; statusEl.style.color = "var(--on-accent)"; }
     $("#detailDesc").textContent = l.description || "";
     $("#detailDesc").style.display = l.description ? "" : "none";
     $("#detailSellerName").textContent = v ? v.store : "Vendedor";
@@ -1688,24 +1893,47 @@
     else { igBtn.style.display = "none"; }
     $("#detailSeeVendor").onclick = function(){ $("#detailDialog").close(); if(v) setVendorFilter(v.id || l.vendor_id); };
 
-    var waBtn = $("#detailWaBtn");
-    if(sold || !v){
-      waBtn.disabled = true;
-      waBtn.textContent = sold ? "Carta ya vendida" : "Vendedor no disponible";
+    $("#fixedPriceActions").style.display = isAuction ? "none" : "";
+    $("#detailAuctionBox").style.display = isAuction ? "" : "none";
+
+    if(!isAuction){
+      var waBtn = $("#detailWaBtn");
+      if(sold || !v){
+        waBtn.disabled = true;
+        waBtn.textContent = sold ? "Carta ya vendida" : "Vendedor no disponible";
+      } else {
+        waBtn.disabled = false;
+        waBtn.innerHTML = '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0012.05 4a8.94 8.94 0 00-7.75 13.4L3 21l3.7-1.28a8.9 8.9 0 004.33 1.12h.01a8.94 8.94 0 006.56-15zm-5.55 13.7a7.4 7.4 0 01-3.78-1.03l-.27-.16-2.79.96.94-2.72-.18-.28a7.42 7.42 0 1113.55-4.15 7.44 7.44 0 01-7.47 7.38zm4.08-5.56c-.22-.11-1.32-.65-1.53-.73-.2-.08-.35-.11-.5.11-.15.22-.57.73-.7.88-.13.15-.26.16-.48.05-.22-.11-.94-.35-1.79-1.11-.66-.59-1.11-1.32-1.24-1.54-.13-.22-.01-.34.1-.45.1-.1.22-.26.33-.39.11-.13.15-.22.22-.37.07-.15.04-.28-.02-.39-.06-.11-.5-1.2-.68-1.65-.18-.43-.36-.37-.5-.38-.13-.01-.28-.01-.43-.01a.83.83 0 00-.6.28c-.2.22-.79.77-.79 1.87s.81 2.17.92 2.32c.11.15 1.6 2.45 3.89 3.43.54.24.97.38 1.3.48.55.17 1.05.15 1.44.09.44-.07 1.32-.54 1.51-1.06.19-.52.19-.96.13-1.06-.05-.09-.2-.15-.42-.26z"/></svg>Consultar por WhatsApp';
+        waBtn.onclick = function(){ openWhatsApp(l, v); };
+      }
     } else {
-      waBtn.disabled = false;
-      waBtn.innerHTML = '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0012.05 4a8.94 8.94 0 00-7.75 13.4L3 21l3.7-1.28a8.9 8.9 0 004.33 1.12h.01a8.94 8.94 0 006.56-15zm-5.55 13.7a7.4 7.4 0 01-3.78-1.03l-.27-.16-2.79.96.94-2.72-.18-.28a7.42 7.42 0 1113.55-4.15 7.44 7.44 0 01-7.47 7.38zm4.08-5.56c-.22-.11-1.32-.65-1.53-.73-.2-.08-.35-.11-.5.11-.15.22-.57.73-.7.88-.13.15-.26.16-.48.05-.22-.11-.94-.35-1.79-1.11-.66-.59-1.11-1.32-1.24-1.54-.13-.22-.01-.34.1-.45.1-.1.22-.26.33-.39.11-.13.15-.22.22-.37.07-.15.04-.28-.02-.39-.06-.11-.5-1.2-.68-1.65-.18-.43-.36-.37-.5-.38-.13-.01-.28-.01-.43-.01a.83.83 0 00-.6.28c-.2.22-.79.77-.79 1.87s.81 2.17.92 2.32c.11.15 1.6 2.45 3.89 3.43.54.24.97.38 1.3.48.55.17 1.05.15 1.44.09.44-.07 1.32-.54 1.51-1.06.19-.52.19-.96.13-1.06-.05-.09-.2-.15-.42-.26z"/></svg>Consultar por WhatsApp';
-      waBtn.onclick = function(){ openWhatsApp(l, v); };
+      $("#auctionTimer").setAttribute("data-ends", l.auction_ends_at || "");
+      $("#auctionTimer").textContent = auctionCountdownText(l.auction_ends_at ? new Date(l.auction_ends_at) : null);
+      var minNext = minNextBid(l);
+      $("#bidMinHint").textContent = "Puja mínima: " + formatCLP(minNext) + " (incrementos de " + formatCLP(l.min_increment) + ")";
+      $("#bidAmount").min = minNext;
+      $("#bidAmount").value = "";
+      $("#bidName").value = ""; $("#bidEmail").value = ""; $("#bidWhatsapp").value = ""; $("#bidInstagram").value = "";
+      $("#bidErr").textContent = "";
+      var canBid = !isMine && !sold && !auctionOver;
+      $("#bidFormWrap").style.display = canBid ? "" : "none";
+      var closedNote = $("#bidClosedNote");
+      closedNote.style.display = canBid ? "none" : "";
+      closedNote.textContent = isMine ? "No puedes pujar en tu propia subasta." : (sold ? "Esta subasta ya fue marcada como vendida." : "Esta subasta ya terminó.");
+      renderBidHistory(l, isMine, auctionOver);
     }
 
-    var isMine = currentUser && currentUser.id === l.vendor_id;
+    var canDelete = !(isAuction && l.bid_count > 0);
+    var showMarkSold = isMine && !sold && (!isAuction || auctionOver);
     $("#detailOwnControls").style.display = isMine ? "flex" : "none";
-    $("#detailMarkSold").style.display = (isMine && !sold) ? "" : "none";
+    $("#detailMarkSold").style.display = showMarkSold ? "" : "none";
     $("#detailMarkSold").onclick = function(){ markSold(l.id); };
     var featureBtn = $("#detailFeature");
     featureBtn.style.display = (isMine && MONETIZATION_ENABLED && !sold) ? "" : "none";
     featureBtn.textContent = isFeatured(l) ? "Destacada ★" : "Destacar";
     featureBtn.onclick = function(){ handleFeatureClick(l.id); };
+    $("#detailDelete").style.display = (isMine && canDelete) ? "" : "none";
+    $("#deleteBlockedHint").style.display = (isMine && !canDelete) ? "" : "none";
     $("#detailDelete").onclick = function(){
       if($("#detailDelete").textContent === "¿Confirmar eliminar?"){ deleteListing(l.id); }
       else {
@@ -1715,6 +1943,83 @@
     };
     $("#detailDialog").showModal();
   }
+
+  function renderBidHistory(l, isMine, auctionOver){
+    var wrap = $("#bidHistoryList");
+    var winnerBox = $("#auctionWinnerBox");
+    wrap.innerHTML = '<p class="no-bids">Cargando pujas…</p>';
+    winnerBox.style.display = "none";
+    var loader = isMine ? loadBidsFull(l.id) : loadBidsPublic(l.id);
+    loader.then(function(bids){
+      if(!bids.length){ wrap.innerHTML = '<p class="no-bids">Todavía no hay pujas.</p>'; return; }
+      var top = bids.reduce(function(m,b){ return (!m || b.amount > m.amount) ? b : m; }, null);
+      if(isMine && auctionOver && top){
+        winnerBox.style.display = "";
+        winnerBox.innerHTML =
+          '<div class="winner-box">'+
+            '<div class="winner-box-label">Ganador de la subasta</div>'+
+            '<div class="winner-box-name">'+esc(top.bidder_name)+' · '+formatCLP(top.amount)+'</div>'+
+            '<a class="btn btn-wa btn-block" href="https://wa.me/'+esc(top.bidder_whatsapp)+'?text='+encodeURIComponent('¡Hola '+top.bidder_name+'! Ganaste la subasta de "'+l.title+'" en '+BRAND+' por '+formatCLP(top.amount)+'. Coordinemos la entrega.')+'" target="_blank" rel="noopener">Escribir al ganador por WhatsApp</a>'+
+          '</div>';
+      }
+      wrap.innerHTML = bids.map(function(b){
+        var isTop = top && b.id === top.id;
+        var tag = "";
+        if(isTop && auctionOver) tag = ' <span class="winner-tag">Ganador</span>';
+        else if(isTop) tag = ' <span class="leading-tag">Va ganando</span>';
+        var contact = isMine ? (
+          '<div class="bid-contact">'+esc(b.bidder_email)+' · <a href="https://wa.me/'+esc(b.bidder_whatsapp)+'" target="_blank" rel="noopener">WhatsApp</a>'+
+          (b.bidder_instagram ? ' · <a href="https://www.instagram.com/'+esc(b.bidder_instagram)+'" target="_blank" rel="noopener">Instagram</a>' : '')+
+          '</div>'
+        ) : '';
+        return '<div class="bid-row'+(isTop?' is-winner':'')+'">'+
+          '<div><div class="bname">'+esc(b.bidder_name)+tag+'</div>'+contact+'</div>'+
+          '<div><div class="bamount">'+formatCLP(b.amount)+'</div><div class="btime">'+timeAgo(b.created_at)+'</div></div>'+
+        '</div>';
+      }).join("");
+    }).catch(function(){
+      wrap.innerHTML = '<p class="no-bids">No se pudo cargar el historial.</p>';
+    });
+  }
+
+  $("#bidSubmitBtn").addEventListener("click", function(){
+    var dd = $("#detailDialog");
+    var l = getListing(dd.dataset.currentId);
+    if(!l) return;
+    var err = $("#bidErr");
+    err.textContent = "";
+    var amount = Number($("#bidAmount").value);
+    var name = $("#bidName").value.trim();
+    var email = $("#bidEmail").value.trim();
+    var whatsapp = normalizePhone($("#bidWhatsapp").value.trim());
+    var instagram = $("#bidInstagram").value.trim().replace(/^@/, "");
+
+    if(name.length < 2){ err.textContent = "Ingresa tu nombre y apellido."; return; }
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ err.textContent = "Ingresa un correo válido."; return; }
+    if(!isValidPhone(whatsapp)){ err.textContent = "Ingresa un WhatsApp chileno válido (ej: +56 9 1234 5678)."; return; }
+    var minNext = minNextBid(l);
+    if(!amount || amount < minNext){ err.textContent = "Tu puja debe ser de al menos " + formatCLP(minNext) + "."; return; }
+
+    var btn = $("#bidSubmitBtn");
+    btn.disabled = true; btn.textContent = "Enviando…";
+
+    withTimeout(sb.rpc("place_bid", {
+      p_listing_id: l.id, p_amount: amount, p_bidder_name: name,
+      p_bidder_email: email, p_bidder_whatsapp: whatsapp, p_bidder_instagram: instagram || null
+    }), 20000).then(function(res){
+      if(res.error) throw res.error;
+      toast("¡Puja registrada!");
+      return loadListings().then(function(){
+        renderAll();
+        var freshL = getListing(l.id);
+        if(freshL && dd.open && dd.dataset.currentId === freshL.id) openDetail(freshL.id);
+      });
+    }).catch(function(error){
+      err.textContent = (error && error.message) || "No se pudo registrar tu puja, intenta de nuevo.";
+    }).finally(function(){
+      btn.disabled = false; btn.textContent = "Pujar";
+    });
+  });
 
   function openWhatsApp(l, v){
     var pageUrl = location.href.split("#")[0];
@@ -1727,6 +2032,11 @@
   $("#searchInput").addEventListener("input", function(e){ filters.search = e.target.value; renderGrid(); });
   $("#regionFilter").addEventListener("change", function(e){ filters.region = e.target.value; renderGrid(); });
   $("#sortSelect").addEventListener("change", function(e){ filters.sort = e.target.value; renderGrid(); });
+  $("#onlyAuctionsChip").addEventListener("click", function(){
+    filters.onlyAuctions = !filters.onlyAuctions;
+    this.classList.toggle("active", filters.onlyAuctions);
+    renderGrid();
+  });
   $("#clearVendorFilter").addEventListener("click", function(){ setVendorFilter(null); });
 
   /* ---------- nav wiring ---------- */
@@ -1756,7 +2066,21 @@
     if(!sb) return;
     sb.channel("public:listings-changes")
       .on("postgres_changes", { event:"*", schema:"public", table:"listings" }, function(){
-        loadListings().then(renderAll);
+        loadListings().then(function(){
+          renderAll();
+          var dd = $("#detailDialog");
+          if(dd.open){
+            var l = getListing(dd.dataset.currentId);
+            if(l && l.listing_type === "auction"){
+              $("#detailPrice").textContent = formatCLP(l.price);
+              $("#detailPriceLabel").textContent = l.bid_count > 0 ? "Puja actual" : "Precio piso";
+              var minNext = minNextBid(l);
+              $("#bidMinHint").textContent = "Puja mínima: " + formatCLP(minNext) + " (incrementos de " + formatCLP(l.min_increment) + ")";
+              $("#bidAmount").min = minNext;
+              renderBidHistory(l, currentUser && currentUser.id === l.vendor_id, isAuctionOver(l));
+            }
+          }
+        });
       }).subscribe();
     sb.channel("public:vendors-changes")
       .on("postgres_changes", { event:"*", schema:"public", table:"vendors" }, function(){
@@ -1793,6 +2117,28 @@
     });
   }
   wireThemeToggle();
+
+  /* ---------- auction countdowns ---------- */
+  function tickAuctionCountdowns(){
+    var now = Date.now();
+    $all(".auction-countdown").forEach(function(el){
+      var ends = el.getAttribute("data-ends");
+      if(!ends) return;
+      var endsDate = new Date(ends);
+      var wasOver = el.getAttribute("data-over") === "1";
+      var isOver = endsDate.getTime() <= now;
+      el.textContent = auctionCountdownText(endsDate);
+      if(isOver && !wasOver){
+        el.setAttribute("data-over", "1");
+        renderGrid();
+      }
+    });
+    var dTimer = $("#auctionTimer");
+    if(dTimer && dTimer.getAttribute("data-ends")){
+      dTimer.textContent = auctionCountdownText(new Date(dTimer.getAttribute("data-ends")));
+    }
+  }
+  setInterval(tickAuctionCountdowns, 15000);
 
   /* ---------- init ---------- */
   function init(){
