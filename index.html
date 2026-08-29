@@ -549,7 +549,7 @@
   .seller-box .sbio{font-size:.85rem; color:var(--ink-soft); line-height:1.5; margin-bottom:var(--sp-3);}
   .seller-actions{display:flex; gap:8px; flex-wrap:wrap;}
   .disclaimer{font-size:.76rem; color:var(--ink-faint); margin-top:var(--sp-4); line-height:1.5;}
-  .own-controls{display:flex; gap:8px; margin-top:var(--sp-4); padding-top:var(--sp-4); border-top:1px solid var(--border);}
+  .own-controls{display:flex; flex-wrap:wrap; gap:8px; margin-top:var(--sp-4); padding-top:var(--sp-4); border-top:1px solid var(--border);}
 
   .toast{
     position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px); opacity:0;
@@ -912,6 +912,10 @@
         <textarea id="profBio" maxlength="280" placeholder="Cuéntales a los compradores qué tipo de cartas vendes, hace cuánto coleccionas, etc."></textarea>
       </div>
       <div class="field-group">
+        <label for="profWhatsapp">WhatsApp</label>
+        <input type="tel" id="profWhatsapp" placeholder="+56 9 1234 5678" required />
+      </div>
+      <div class="field-group">
         <label for="profInstagram">Instagram (opcional)</label>
         <input type="text" id="profInstagram" maxlength="30" placeholder="tu.usuario" />
       </div>
@@ -1006,6 +1010,7 @@
         </div>
 
         <div class="own-controls" id="detailOwnControls" style="display:none;">
+          <button class="btn btn-quiet btn-sm" id="detailEdit" type="button">Editar</button>
           <button class="btn btn-quiet btn-sm" id="detailMarkSold" type="button">Marcar como vendida</button>
           <button class="btn btn-quiet btn-sm" id="detailFeature" type="button" style="display:none;">Destacar</button>
           <button class="btn btn-danger btn-sm" id="detailDelete" type="button">Eliminar publicación</button>
@@ -1015,6 +1020,52 @@
         <p class="disclaimer">Cartopia funciona como vidriera y no interviene en pagos, envíos ni garantías. Este vendedor actúa de forma independiente.</p>
       </div>
     </div>
+  </div>
+</dialog>
+
+<!-- ===================== EDIT LISTING DIALOG ===================== -->
+<dialog id="editListingDialog">
+  <div class="dialog-head">
+    <h3>Editar publicación</h3>
+    <button class="dialog-close" data-close="editListingDialog" type="button" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="dialog-body">
+    <form id="editListingForm" novalidate>
+      <div class="field-group">
+        <label for="editPhoto">Foto de la carta</label>
+        <div class="photo-drop" id="editPhotoDrop">
+          <div id="editPhotoPreviewWrap"></div>
+          <input type="file" accept="image/*" id="editPhoto" />
+        </div>
+        <p class="hint">Tocá la foto para reemplazarla, o déjala como está.</p>
+      </div>
+      <div class="field-group">
+        <label for="editTitle">Título de la carta</label>
+        <input type="text" id="editTitle" maxlength="70" placeholder='Ej: Alexis Sánchez Panini Prizm Rookie' required />
+      </div>
+      <div class="field-group">
+        <label for="editSport">Deporte</label>
+        <select id="editSport" required></select>
+      </div>
+      <div class="field-group" id="editPriceGroup">
+        <label for="editPrice">Precio (CLP)</label>
+        <input type="number" id="editPrice" min="500" max="10000000" step="500" placeholder="15000" />
+      </div>
+      <p class="hint" id="editAuctionNote" style="display:none;">El precio de una subasta no se edita a mano: se actualiza solo con cada puja.</p>
+      <div class="field-group">
+        <label for="editRegion">Región donde coordinas la entrega</label>
+        <select id="editRegion" required></select>
+      </div>
+      <div class="field-group">
+        <label for="editShips"><input type="checkbox" id="editShips" style="width:auto; margin-right:6px;" />Hago envíos a todo Chile</label>
+      </div>
+      <div class="field-group">
+        <label for="editDesc">Descripción (opcional)</label>
+        <textarea id="editDesc" maxlength="300" placeholder="Estado de la carta, edición, detalles del envío…"></textarea>
+      </div>
+      <div class="err" id="editListingErr"></div>
+      <button class="btn btn-primary btn-block" type="submit" id="editListingSubmitBtn">Guardar cambios</button>
+    </form>
   </div>
 </dialog>
 
@@ -1083,6 +1134,11 @@
     return digits;
   }
   function isValidPhone(digits){ return /^56\d{9}$/.test(digits); }
+  function formatPhoneDisplay(digits){
+    var d = String(digits||"");
+    if(!/^56\d{9}$/.test(d)) return d;
+    return "+56 " + d.charAt(2) + " " + d.substr(3,4) + " " + d.substr(7,4);
+  }
   function isAuctionOver(l){
     return !!(l && l.listing_type === "auction" && l.auction_ends_at && new Date(l.auction_ends_at).getTime() <= Date.now());
   }
@@ -1149,6 +1205,8 @@
   var pendingBlob = null;
   var pendingAvatarBlob = null;
   var avatarRemoved = false;
+  var pendingEditBlob = null;
+  var editListingId = null;
 
   /* ---------- static selects ---------- */
   function fillRegionSelect(sel, withAll){
@@ -1175,7 +1233,9 @@
   fillRegionSelect($("#regionFilter"), true);
   fillRegionSelect($("#regRegion"), false);
   fillRegionSelect($("#pubRegion"), false);
+  fillRegionSelect($("#editRegion"), false);
   fillSportSelect($("#pubSport"));
+  fillSportSelect($("#editSport"));
 
   (function renderSportChips(){
     var wrap = $("#sportChips");
@@ -1764,6 +1824,7 @@
     pendingAvatarBlob = null;
     avatarRemoved = false;
     $("#profBio").value = currentVendor.bio || "";
+    $("#profWhatsapp").value = formatPhoneDisplay(currentVendor.whatsapp);
     $("#profInstagram").value = currentVendor.instagram || "";
     if(currentVendor.avatar_url){
       $("#avatarPreviewWrap").innerHTML = '<img src="'+esc(currentVendor.avatar_url)+'" alt="" />';
@@ -1783,7 +1844,10 @@
     err.textContent = "";
     if(!currentUser || !currentVendor){ err.textContent = "Tienes que iniciar sesión."; return; }
     var bio = $("#profBio").value.trim();
+    var phone = normalizePhone($("#profWhatsapp").value.trim());
     var instagram = $("#profInstagram").value.trim().replace(/^@/, "");
+
+    if(!isValidPhone(phone)){ err.textContent = "Ingresa un WhatsApp chileno válido (ej: +56 9 1234 5678)."; return; }
 
     var btn = $("#profileSubmitBtn");
     btn.disabled = true; btn.textContent = "Guardando…";
@@ -1804,7 +1868,7 @@
 
     withTimeout(uploadStep.then(function(avatarUrl){
       return sb.from("vendors").update({
-        bio: bio || null, avatar_url: avatarUrl, instagram: instagram || null
+        bio: bio || null, avatar_url: avatarUrl, whatsapp: phone, instagram: instagram || null
       }).eq("id", currentUser.id);
     }).then(function(res){
       if(res && res.error) throw res.error;
@@ -1817,6 +1881,97 @@
       toast("Perfil actualizado");
       renderAll();
       if(filters.vendorId === currentUser.id) setVendorFilter(currentUser.id);
+    }), 30000).catch(function(error){
+      err.textContent = error.message || "No se pudo guardar, intenta de nuevo.";
+    }).finally(function(){
+      btn.disabled = false; btn.textContent = "Guardar cambios";
+    });
+  });
+
+  /* ---------- edit listing ---------- */
+  $("#editPhoto").addEventListener("change", function(e){
+    var file = e.target.files && e.target.files[0];
+    if(!file) return;
+    resizeImageToBlob(file).then(function(blob){
+      pendingEditBlob = blob;
+      var url = URL.createObjectURL(blob);
+      $("#editPhotoPreviewWrap").innerHTML = '<img src="'+url+'" alt="Vista previa" />';
+    }).catch(function(){
+      toast("No se pudo procesar esa imagen, prueba con otra foto.");
+    });
+  });
+
+  function openEditListingDialog(id){
+    var l = getListing(id);
+    if(!l || !currentUser || currentUser.id !== l.vendor_id) return;
+    editListingId = id;
+    pendingEditBlob = null;
+    $("#editListingForm").reset();
+    $("#editPhotoPreviewWrap").innerHTML = '<img src="'+esc(l.photo_url)+'" alt="" />';
+    $("#editTitle").value = l.title;
+    $("#editSport").value = l.sport;
+    $("#editRegion").value = l.region;
+    $("#editShips").checked = !!l.ships;
+    $("#editDesc").value = l.description || "";
+    var isAuction = l.listing_type === "auction";
+    $("#editPriceGroup").style.display = isAuction ? "none" : "";
+    $("#editAuctionNote").style.display = isAuction ? "" : "none";
+    $("#editPrice").value = isAuction ? "" : l.price;
+    $("#editListingErr").textContent = "";
+    $("#editListingDialog").showModal();
+  }
+
+  $("#editListingForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var err = $("#editListingErr");
+    err.textContent = "";
+    var l = getListing(editListingId);
+    if(!l){ err.textContent = "Esta publicación ya no existe."; return; }
+    var title = $("#editTitle").value.trim();
+    var sport = $("#editSport").value;
+    var region = $("#editRegion").value;
+    var ships = $("#editShips").checked;
+    var desc = $("#editDesc").value.trim();
+    var isAuction = l.listing_type === "auction";
+    var price;
+    if(!isAuction) price = Number($("#editPrice").value);
+
+    if(title.length < 3){ err.textContent = "Escribe un título para la carta."; return; }
+    if(!region){ err.textContent = "Selecciona una región."; return; }
+    if(!isAuction && (!price || price < 500)){ err.textContent = "Ingresa un precio válido en pesos chilenos."; return; }
+
+    var btn = $("#editListingSubmitBtn");
+    btn.disabled = true; btn.textContent = "Guardando…";
+
+    var photoStep;
+    if(pendingEditBlob){
+      var path = currentUser.id + "/" + Date.now() + "-edit.jpg";
+      photoStep = sb.storage.from(BUCKET).upload(path, pendingEditBlob, { contentType:"image/jpeg" }).then(function(res){
+        if(res.error) throw res.error;
+        var pub = sb.storage.from(BUCKET).getPublicUrl(path);
+        return pub.data.publicUrl;
+      });
+    } else {
+      photoStep = Promise.resolve(l.photo_url);
+    }
+
+    withTimeout(photoStep.then(function(photoUrl){
+      var payload = {
+        title: title, sport: sport, region: region, ships: ships,
+        description: desc || null, photo_url: photoUrl
+      };
+      if(!isAuction) payload.price = price;
+      return sb.from("listings").update(payload).eq("id", l.id);
+    }).then(function(res){
+      if(res && res.error) throw res.error;
+      toast("Publicación actualizada");
+      pendingEditBlob = null;
+      $("#editListingDialog").close();
+      return loadListings();
+    }).then(function(){
+      renderAll();
+      var dd = $("#detailDialog");
+      if(dd.open && dd.dataset.currentId === l.id) openDetail(l.id);
     }), 30000).catch(function(error){
       err.textContent = error.message || "No se pudo guardar, intenta de nuevo.";
     }).finally(function(){
@@ -1926,6 +2081,7 @@
     var canDelete = !(isAuction && l.bid_count > 0);
     var showMarkSold = isMine && !sold && (!isAuction || auctionOver);
     $("#detailOwnControls").style.display = isMine ? "flex" : "none";
+    $("#detailEdit").onclick = function(){ openEditListingDialog(l.id); };
     $("#detailMarkSold").style.display = showMarkSold ? "" : "none";
     $("#detailMarkSold").onclick = function(){ markSold(l.id); };
     var featureBtn = $("#detailFeature");
