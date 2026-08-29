@@ -115,6 +115,15 @@ El sitio ya viene con lo básico armado para monetizar, pero **apagado** — hoy
 
 ---
 
+## Novedades: editar tu WhatsApp y editar publicaciones ya hechas
+
+Estas dos funciones ya están listas y no necesitan ningún paso en Supabase — solo reemplaza `index.html` en GitHub y listo:
+
+- **Editar tu WhatsApp**: en "Editar perfil" ahora, además de tu foto, descripción e Instagram, también puedes corregir tu número de WhatsApp si lo escribiste mal al registrarte.
+- **Editar una carta ya publicada**: abre cualquiera de tus cartas (haz clic en ella para abrir el detalle) y vas a ver un botón **"Editar"** junto a "Marcar como vendida". Ahí puedes cambiar el título, la foto, el deporte, la región, si haces envíos, la descripción y, si es una carta de precio fijo, también el precio. En las subastas el precio no se puede tocar a mano (se actualiza solo con cada puja, por diseño), así que ese campo se oculta cuando editas una subasta.
+
+---
+
 ## Cosas que conviene saber
 
 - **Seguridad del login**: a diferencia de la primera versión de prueba (que usaba un PIN simple), esta ya usa cuentas reales de Supabase con contraseña, que es bastante más seguro. Aun así, para lanzarlo en serio conviene más adelante reactivar "Confirm email" y revisar las políticas de contraseña en Supabase.
