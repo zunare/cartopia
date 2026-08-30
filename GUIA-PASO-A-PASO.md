@@ -121,6 +121,7 @@ Estas dos funciones ya están listas y no necesitan ningún paso en Supabase —
 
 - **Editar tu WhatsApp**: en "Editar perfil" ahora, además de tu foto, descripción e Instagram, también puedes corregir tu número de WhatsApp si lo escribiste mal al registrarte.
 - **Editar una carta ya publicada**: abre cualquiera de tus cartas (haz clic en ella para abrir el detalle) y vas a ver un botón **"Editar"** junto a "Marcar como vendida". Ahí puedes cambiar el título, la foto, el deporte, la región, si haces envíos, la descripción y, si es una carta de precio fijo, también el precio. En las subastas el precio no se puede tocar a mano (se actualiza solo con cada puja, por diseño), así que ese campo se oculta cuando editas una subasta.
+- **Duración de subasta a tu gusto**: al publicar una subasta, ya no eliges entre 1/3/5/7 días fijos — eliges tú mismo la fecha y hora exacta en que termina (puedes usar los atajos "+1 hora", "+1 día", etc. para rellenarlo rápido, o poner cualquier otra fecha). Por seguridad, el mínimo es 1 hora desde que publicas y el máximo son 60 días.
 
 ---
 
