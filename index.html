@@ -862,13 +862,16 @@
           </div>
         </div>
         <div class="field-group">
-          <label for="pubDuration">Duración de la subasta</label>
-          <select id="pubDuration">
-            <option value="1">1 día</option>
-            <option value="3" selected>3 días</option>
-            <option value="5">5 días</option>
-            <option value="7">7 días</option>
-          </select>
+          <label for="pubEndsAt">Fecha y hora exacta de término</label>
+          <input type="datetime-local" id="pubEndsAt" required />
+          <div class="chiprow" id="pubDurationChips" style="margin-top:2px;">
+            <button type="button" class="chip" data-mins="60">+1 hora</button>
+            <button type="button" class="chip" data-mins="1440">+1 día</button>
+            <button type="button" class="chip" data-mins="4320">+3 días</button>
+            <button type="button" class="chip" data-mins="10080">+7 días</button>
+            <button type="button" class="chip" data-mins="20160">+14 días</button>
+          </div>
+          <p class="hint">Elige tú mismo cuándo termina, o toca un atajo para rellenarlo rápido.</p>
         </div>
         <p class="hint">La subasta empieza apenas publiques. No hace falta iniciar sesión para pujar. Si alguien puja en los últimos 2 minutos, el cierre se estira un poco para que nadie la "robe" al final.</p>
       </div>
@@ -1157,6 +1160,11 @@
   }
   function minNextBid(l){
     return l.bid_count > 0 ? (l.price + l.min_increment) : l.floor_price;
+  }
+  function toLocalDatetimeInputValue(date){
+    var pad = function(n){ return String(n).length < 2 ? "0" + n : String(n); };
+    return date.getFullYear() + "-" + pad(date.getMonth()+1) + "-" + pad(date.getDate()) +
+      "T" + pad(date.getHours()) + ":" + pad(date.getMinutes());
   }
   function vendorInitial(v){ return esc((v && v.store ? v.store : "?").trim().charAt(0).toUpperCase()); }
   function avatarInner(v){ return (v && v.avatar_url) ? '<img src="'+esc(v.avatar_url)+'" alt="" />' : vendorInitial(v); }
@@ -1699,6 +1707,12 @@
     if(!btn) return;
     setPubType(btn.getAttribute("data-type"));
   });
+  $("#pubDurationChips").addEventListener("click", function(e){
+    var btn = e.target.closest(".chip");
+    if(!btn) return;
+    var mins = Number(btn.getAttribute("data-mins"));
+    $("#pubEndsAt").value = toLocalDatetimeInputValue(new Date(Date.now() + mins * 60000));
+  });
 
   function openPublishDialog(){
     if(!currentUser || !currentVendor){ openAuthDialog("register"); return; }
@@ -1709,6 +1723,7 @@
       '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--ink-faint)"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5.5-5-5 5-2-2L3 18"/></svg><p>Tocá para subir una foto (se optimiza automáticamente)</p>';
     $("#publishErr").textContent = "";
     $("#pubRegion").value = currentVendor.region;
+    $("#pubEndsAt").value = toLocalDatetimeInputValue(new Date(Date.now() + 3 * 86400000));
     $("#publishDialog").showModal();
   }
 
@@ -1724,11 +1739,12 @@
     var desc = $("#pubDesc").value.trim();
     var isAuction = pubType === "auction";
 
-    var price, floor, increment, days;
+    var price, floor, increment, endsAtDate;
     if(isAuction){
       floor = Number($("#pubFloor").value);
       increment = Number($("#pubIncrement").value);
-      days = Number($("#pubDuration").value);
+      var endsAtStr = $("#pubEndsAt").value;
+      endsAtDate = endsAtStr ? new Date(endsAtStr) : null;
     } else {
       price = Number($("#pubPrice").value);
     }
@@ -1739,7 +1755,9 @@
     if(isAuction){
       if(!floor || floor < 500){ err.textContent = "Ingresa un precio piso válido en pesos chilenos."; return; }
       if(!increment){ err.textContent = "Selecciona un incremento mínimo."; return; }
-      if(!days){ err.textContent = "Selecciona la duración de la subasta."; return; }
+      if(!endsAtDate || isNaN(endsAtDate.getTime())){ err.textContent = "Elige la fecha y hora en que termina la subasta."; return; }
+      if(endsAtDate.getTime() < Date.now() + 60*60000){ err.textContent = "La subasta debe durar al menos 1 hora desde ahora."; return; }
+      if(endsAtDate.getTime() > Date.now() + 60*86400000){ err.textContent = "La subasta no puede durar más de 60 días."; return; }
     } else {
       if(!price || price < 500){ err.textContent = "Ingresa un precio válido en pesos chilenos."; return; }
     }
@@ -1771,7 +1789,7 @@
         payload.price = floor;
         payload.floor_price = floor;
         payload.min_increment = increment;
-        payload.auction_ends_at = new Date(Date.now() + days * 86400000).toISOString();
+        payload.auction_ends_at = endsAtDate.toISOString();
         payload.bid_count = 0;
       } else {
         payload.listing_type = "fixed";
