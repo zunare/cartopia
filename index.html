@@ -802,7 +802,47 @@
         <div class="err" id="loginErr"></div>
         <button class="btn btn-primary btn-block" type="submit" id="loginSubmitBtn">Entrar a mi catálogo</button>
       </form>
+      <p class="hint" style="text-align:center; margin-top:var(--sp-3);">
+        <button type="button" id="forgotPasswordBtn" class="link-btn">¿Olvidaste tu contraseña?</button>
+      </p>
     </div>
+
+    <div class="authpane" id="paneReset">
+      <form id="resetForm" novalidate>
+        <div class="field-group">
+          <label for="resetEmail">Correo</label>
+          <input type="email" id="resetEmail" placeholder="tu@correo.com" required />
+        </div>
+        <p class="hint">Te enviamos un correo con un link para crear una contraseña nueva.</p>
+        <div class="err" id="resetErr"></div>
+        <button class="btn btn-primary btn-block" type="submit" id="resetSubmitBtn">Enviar link de recuperación</button>
+      </form>
+      <p class="hint" style="text-align:center; margin-top:var(--sp-3);">
+        <button type="button" id="backToLoginBtn" class="link-btn">Volver a iniciar sesión</button>
+      </p>
+    </div>
+  </div>
+</dialog>
+
+<!-- ===================== NEW PASSWORD DIALOG ===================== -->
+<dialog id="newPasswordDialog">
+  <div class="dialog-head">
+    <h3>Crea tu nueva contraseña</h3>
+    <button class="dialog-close" data-close="newPasswordDialog" type="button" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="dialog-body">
+    <form id="newPasswordForm" novalidate>
+      <div class="field-group">
+        <label for="newPassword1">Nueva contraseña</label>
+        <input type="password" id="newPassword1" placeholder="Mínimo 6 caracteres" required />
+      </div>
+      <div class="field-group">
+        <label for="newPassword2">Repite la nueva contraseña</label>
+        <input type="password" id="newPassword2" required />
+      </div>
+      <div class="err" id="newPasswordErr"></div>
+      <button class="btn btn-primary btn-block" type="submit" id="newPasswordSubmitBtn">Guardar nueva contraseña</button>
+    </form>
   </div>
 </dialog>
 
@@ -1200,6 +1240,9 @@
   var sb = null;
   if(configOk && window.supabase){
     sb = window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY);
+    sb.auth.onAuthStateChange(function(event){
+      if(event === "PASSWORD_RECOVERY") openNewPasswordDialog();
+    });
   } else {
     $("#setupBanner").classList.add("show");
   }
@@ -1573,15 +1616,77 @@
   }
   function switchAuthTab(tab){
     var isReg = tab === "register";
+    var isReset = tab === "reset";
     $("#tabRegister").classList.toggle("active", isReg);
-    $("#tabLogin").classList.toggle("active", !isReg);
+    $("#tabLogin").classList.toggle("active", !isReg && !isReset);
     $("#paneRegister").classList.toggle("active", isReg);
-    $("#paneLogin").classList.toggle("active", !isReg);
+    $("#paneLogin").classList.toggle("active", !isReg && !isReset);
+    $("#paneReset").classList.toggle("active", isReset);
   }
   $("#tabRegister").addEventListener("click", function(){ switchAuthTab("register"); });
   $("#tabLogin").addEventListener("click", function(){ switchAuthTab("login"); });
+  $("#forgotPasswordBtn").addEventListener("click", function(){
+    $("#resetErr").textContent = "";
+    $("#resetEmail").value = $("#loginEmail").value.trim();
+    switchAuthTab("reset");
+  });
+  $("#backToLoginBtn").addEventListener("click", function(){ switchAuthTab("login"); });
   $all("[data-close]").forEach(function(btn){
     btn.addEventListener("click", function(){ $("#" + btn.getAttribute("data-close")).close(); });
+  });
+
+  $("#resetForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var email = $("#resetEmail").value.trim();
+    var err = $("#resetErr");
+    err.textContent = "";
+    if(!email){ err.textContent = "Ingresa tu correo."; return; }
+    var btn = $("#resetSubmitBtn");
+    btn.disabled = true; btn.textContent = "Enviando…";
+    withTimeout(sb.auth.resetPasswordForEmail(email, {
+      redirectTo: location.origin + location.pathname
+    }), 20000).then(function(res){
+      if(res.error) throw res.error;
+      $("#resetForm").reset();
+      toast("Listo, revisa tu correo (y la carpeta de spam) para crear tu contraseña nueva.");
+      switchAuthTab("login");
+    }).catch(function(error){
+      err.textContent = error.message || "No se pudo enviar el correo, intenta de nuevo.";
+    }).finally(function(){
+      btn.disabled = false; btn.textContent = "Enviar link de recuperación";
+    });
+  });
+
+  function openNewPasswordDialog(){
+    $all("dialog[open]").forEach(function(d){ d.close(); });
+    $("#newPasswordForm").reset();
+    $("#newPasswordErr").textContent = "";
+    $("#newPasswordDialog").showModal();
+  }
+
+  $("#newPasswordForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var err = $("#newPasswordErr");
+    err.textContent = "";
+    var p1 = $("#newPassword1").value;
+    var p2 = $("#newPassword2").value;
+    if(p1.length < 6){ err.textContent = "La contraseña debe tener al menos 6 caracteres."; return; }
+    if(p1 !== p2){ err.textContent = "Las contraseñas no coinciden."; return; }
+    var btn = $("#newPasswordSubmitBtn");
+    btn.disabled = true; btn.textContent = "Guardando…";
+    withTimeout(sb.auth.updateUser({ password: p1 }), 20000).then(function(res){
+      if(res.error) throw res.error;
+      return loadSession().then(function(){ return loadVendors(); });
+    }).then(function(){
+      $("#newPasswordDialog").close();
+      history.replaceState(null, "", location.pathname + location.search);
+      toast("Contraseña actualizada. Ya iniciaste sesión con la nueva.");
+      renderAll();
+    }).catch(function(error){
+      err.textContent = error.message || "No se pudo actualizar la contraseña, intenta de nuevo.";
+    }).finally(function(){
+      btn.disabled = false; btn.textContent = "Guardar nueva contraseña";
+    });
   });
 
   /* ---------- register / login ---------- */
