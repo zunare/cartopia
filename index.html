@@ -505,8 +505,34 @@
   .link-btn{background:none; border:none; padding:0; color:var(--accent-strong); font-weight:600; cursor:pointer; text-decoration:underline; font-size:inherit;}
 
   .detail-grid{display:grid; grid-template-columns:1fr; gap:var(--sp-4);}
-  .detail-photo{aspect-ratio:4/5; border-radius:var(--radius-md); background:var(--surface-2); overflow:hidden; max-width:280px; margin:0 auto;}
+  .detail-photo{position:relative; aspect-ratio:4/5; border-radius:var(--radius-md); background:var(--surface-2); overflow:hidden; max-width:280px; margin:0 auto;}
   .detail-photo img{width:100%; height:100%; object-fit:cover;}
+  .detail-photo-nav{
+    position:absolute; top:50%; transform:translateY(-50%); width:30px; height:30px; border-radius:50%;
+    border:none; background:rgba(10,14,11,.55); color:#fff; cursor:pointer; font-size:1.1rem; line-height:1;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .detail-photo-nav:hover{background:rgba(10,14,11,.8);}
+  .detail-photo-nav.prev{left:6px;}
+  .detail-photo-nav.next{right:6px;}
+  .detail-photo-thumbs{display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-top:8px; max-width:280px; margin-left:auto; margin-right:auto;}
+  .detail-photo-thumbs button{width:42px; height:42px; border-radius:6px; overflow:hidden; border:2px solid transparent; padding:0; cursor:pointer; background:var(--surface-2); flex:none;}
+  .detail-photo-thumbs button.active{border-color:var(--accent);}
+  .detail-photo-thumbs img{width:100%; height:100%; object-fit:cover; display:block;}
+
+  .photo-thumbs{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+  .photo-thumbs .pthumb{position:relative; width:72px; height:72px; border-radius:8px; overflow:hidden; background:var(--surface-2); flex:none;}
+  .photo-thumbs .pthumb img{width:100%; height:100%; object-fit:cover; display:block;}
+  .photo-thumbs .pthumb button{
+    position:absolute; top:2px; right:2px; width:20px; height:20px; border-radius:50%; border:none;
+    background:rgba(10,14,11,.75); color:#fff; font-size:.7rem; line-height:1; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; padding:0;
+  }
+  .photo-thumbs .pthumb .cover-tag{
+    position:absolute; bottom:2px; left:2px; font-size:.55rem; font-weight:700;
+    background:rgba(10,14,11,.75); color:#fff; padding:1px 5px; border-radius:4px;
+  }
+  .stock-note{font-size:.72rem; color:var(--accent-strong); font-weight:700;}
   .detail-price-row{display:flex; align-items:center; justify-content:space-between; gap:var(--sp-3);}
   .detail-price{font-family:var(--font-mono); font-size:1.8rem; font-weight:600;}
   .wa-note{font-size:.78rem; color:var(--ink-faint); text-align:center; margin-top:8px;}
@@ -862,14 +888,15 @@
         </div>
       </div>
       <div class="field-group">
-        <label for="pubPhoto">Foto de la carta</label>
+        <label for="pubPhoto">Fotos de la carta (hasta 6)</label>
         <div class="photo-drop" id="photoDrop">
           <div id="photoPreviewWrap">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--ink-faint)"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5.5-5-5 5-2-2L3 18"/></svg>
-            <p>Tocá para subir una foto (se optimiza automáticamente)</p>
+            <p id="pubPhotoDropLabel">Tocá para subir fotos (podés elegir varias a la vez)</p>
           </div>
-          <input type="file" accept="image/*" id="pubPhoto" required />
+          <input type="file" accept="image/*" id="pubPhoto" multiple />
         </div>
+        <div class="photo-thumbs" id="pubPhotoThumbs"></div>
       </div>
       <div class="field-group">
         <label for="pubTitle">Título de la carta</label>
@@ -879,9 +906,15 @@
         <label for="pubSport">Deporte</label>
         <select id="pubSport" required></select>
       </div>
-      <div class="field-group" id="pubPriceGroup">
-        <label for="pubPrice">Precio (CLP)</label>
-        <input type="number" id="pubPrice" min="500" max="10000000" step="500" placeholder="15000" />
+      <div class="two-col" id="pubPriceGroup">
+        <div class="field-group">
+          <label for="pubPrice">Precio (CLP)</label>
+          <input type="number" id="pubPrice" min="500" max="10000000" step="500" placeholder="15000" />
+        </div>
+        <div class="field-group">
+          <label for="pubStock">Stock (unidades)</label>
+          <input type="number" id="pubStock" min="1" max="999" step="1" value="1" />
+        </div>
       </div>
       <div id="pubAuctionFields" style="display:none;">
         <div class="two-col">
@@ -976,7 +1009,12 @@
   </div>
   <div class="dialog-body">
     <div class="detail-grid">
-      <div class="detail-photo"><img id="detailImg" src="" alt="" /></div>
+      <div class="detail-photo" id="detailPhotoBox">
+        <img id="detailImg" src="" alt="" />
+        <button type="button" class="detail-photo-nav prev" id="detailPhotoPrev" aria-label="Foto anterior" style="display:none;">‹</button>
+        <button type="button" class="detail-photo-nav next" id="detailPhotoNext" aria-label="Foto siguiente" style="display:none;">›</button>
+      </div>
+      <div class="detail-photo-thumbs" id="detailPhotoThumbs"></div>
       <div>
         <span class="eyebrow" id="detailSport"></span>
         <h3 id="detailTitle" style="font-family:var(--font-body); font-size:1.2rem; margin:6px 0 10px;"></h3>
@@ -1075,12 +1113,16 @@
   <div class="dialog-body">
     <form id="editListingForm" novalidate>
       <div class="field-group">
-        <label for="editPhoto">Foto de la carta</label>
+        <label for="editPhoto">Fotos de la carta (hasta 6)</label>
         <div class="photo-drop" id="editPhotoDrop">
-          <div id="editPhotoPreviewWrap"></div>
-          <input type="file" accept="image/*" id="editPhoto" />
+          <div id="editPhotoPreviewWrap">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--ink-faint)"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5.5-5-5 5-2-2L3 18"/></svg>
+            <p>Tocá para agregar fotos</p>
+          </div>
+          <input type="file" accept="image/*" id="editPhoto" multiple />
         </div>
-        <p class="hint">Tocá la foto para reemplazarla, o déjala como está.</p>
+        <div class="photo-thumbs" id="editPhotoThumbs"></div>
+        <p class="hint">La primera foto de la lista es la que se muestra en el marketplace.</p>
       </div>
       <div class="field-group">
         <label for="editTitle">Título de la carta</label>
@@ -1090,9 +1132,15 @@
         <label for="editSport">Deporte</label>
         <select id="editSport" required></select>
       </div>
-      <div class="field-group" id="editPriceGroup">
-        <label for="editPrice">Precio (CLP)</label>
-        <input type="number" id="editPrice" min="500" max="10000000" step="500" placeholder="15000" />
+      <div class="two-col" id="editPriceGroup">
+        <div class="field-group">
+          <label for="editPrice">Precio (CLP)</label>
+          <input type="number" id="editPrice" min="500" max="10000000" step="500" placeholder="15000" />
+        </div>
+        <div class="field-group">
+          <label for="editStock">Stock (unidades)</label>
+          <input type="number" id="editStock" min="1" max="999" step="1" value="1" />
+        </div>
       </div>
       <p class="hint" id="editAuctionNote" style="display:none;">El precio de una subasta no se edita a mano: se actualiza solo con cada puja.</p>
       <div class="field-group">
@@ -1133,6 +1181,7 @@
   };
   var BRAND = "Cartopia";
   var BUCKET = "listing-photos";
+  var MAX_PHOTOS = 6;
 
   /* ---------- monetización (apagada por defecto) ----------
      Cuando quieras empezar a cobrar, cambia esto a true. Con esto en
@@ -1253,11 +1302,13 @@
   var allListings = [];     // cached, each with .vendor joined
   var allVendors = [];
   var filters = { search:"", sport:"Todos", region:"all", sort:"recent", vendorId:null, onlyAuctions:false };
-  var pendingBlob = null;
+  var pendingPhotos = [];   // [{ blob, url }] for the publish dialog, in order (first = cover)
   var pendingAvatarBlob = null;
   var avatarRemoved = false;
-  var pendingEditBlob = null;
+  var editPhotoItems = [];  // [{ existingUrl } | { blob, url }] for the edit dialog, in order
   var editListingId = null;
+  var detailPhotoList = [];
+  var detailPhotoIndex = 0;
 
   /* ---------- static selects ---------- */
   function fillRegionSelect(sel, withAll){
@@ -1500,6 +1551,7 @@
           (isAuction ? '<div class="price-label">'+(l.bid_count>0?'Puja actual':'Precio piso')+'</div>' : '')+
           '<div class="price">'+formatCLP(l.price)+'</div>'+
           (isAuction ? '<div class="auction-countdown" data-ends="'+esc(l.auction_ends_at||"")+'"'+(auctionOver?' data-over="1"':'')+'>'+auctionCountdownText(l.auction_ends_at?new Date(l.auction_ends_at):null)+'</div>' : '')+
+          (!isAuction && !sold && l.stock > 1 ? '<div class="stock-note">Stock: '+l.stock+'</div>' : '')+
           '<div class="meta">'+
             '<span class="seller">'+esc(v ? v.store : "Vendedor")+'</span>'+
             (isAuction ? '<span>'+(l.bid_count||0)+(l.bid_count===1?' puja':' pujas')+'</span>' : (l.ships ? '<span class="ships">Envíos a Chile</span>' : '<span>'+timeAgo(l.created_at)+'</span>'))+
@@ -1763,16 +1815,56 @@
 
   /* ---------- publish ---------- */
   $("#pubPhoto").addEventListener("change", function(e){
-    var file = e.target.files && e.target.files[0];
-    if(!file) return;
-    resizeImageToBlob(file).then(function(blob){
-      pendingBlob = blob;
-      var url = URL.createObjectURL(blob);
-      $("#photoPreviewWrap").innerHTML = '<img src="'+url+'" alt="Vista previa" />';
-    }).catch(function(){
-      toast("No se pudo procesar esa imagen, prueba con otra foto.");
-    });
+    addFilesToPending(e.target.files, pendingPhotos, renderPubPhotoThumbs);
+    e.target.value = "";
   });
+
+  function addFilesToPending(fileList, targetArray, rerender){
+    var files = Array.prototype.slice.call(fileList || []);
+    if(!files.length) return;
+    var room = MAX_PHOTOS - targetArray.length;
+    if(room <= 0){ toast("Ya tienes el máximo de " + MAX_PHOTOS + " fotos."); return; }
+    var toProcess = files.slice(0, room);
+    if(files.length > room) toast("Se agregaron solo " + room + " foto(s) — el máximo es " + MAX_PHOTOS + ".");
+    Promise.all(toProcess.map(function(f){
+      return resizeImageToBlob(f).then(function(blob){
+        return { blob: blob, url: URL.createObjectURL(blob) };
+      }).catch(function(){ return null; });
+    })).then(function(results){
+      var any = false, failed = false;
+      results.forEach(function(item){
+        if(item){ targetArray.push(item); any = true; } else { failed = true; }
+      });
+      if(failed) toast("No se pudo procesar alguna de las imágenes.");
+      if(any) rerender();
+    });
+  }
+
+  function renderPhotoThumbsInto(container, items, onRemove){
+    container.innerHTML = items.map(function(item, i){
+      var url = item.existingUrl || item.url;
+      return '<div class="pthumb">' +
+        '<img src="' + esc(url) + '" alt="" />' +
+        (i === 0 ? '<span class="cover-tag">Portada</span>' : '') +
+        '<button type="button" data-remove="' + i + '" aria-label="Quitar foto">✕</button>' +
+        '</div>';
+    }).join("");
+    $all("[data-remove]", container).forEach(function(btn){
+      btn.addEventListener("click", function(){ onRemove(Number(btn.getAttribute("data-remove"))); });
+    });
+  }
+  function renderPubPhotoThumbs(){
+    renderPhotoThumbsInto($("#pubPhotoThumbs"), pendingPhotos, function(i){
+      pendingPhotos.splice(i, 1);
+      renderPubPhotoThumbs();
+    });
+  }
+  function renderEditPhotoThumbs(){
+    renderPhotoThumbsInto($("#editPhotoThumbs"), editPhotoItems, function(i){
+      editPhotoItems.splice(i, 1);
+      renderEditPhotoThumbs();
+    });
+  }
 
   function resizeImageToBlob(file){
     return new Promise(function(resolve, reject){
@@ -1822,12 +1914,12 @@
   function openPublishDialog(){
     if(!currentUser || !currentVendor){ openAuthDialog("register"); return; }
     $("#publishForm").reset();
-    pendingBlob = null;
+    pendingPhotos = [];
+    renderPubPhotoThumbs();
     setPubType("fixed");
-    $("#photoPreviewWrap").innerHTML =
-      '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--ink-faint)"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5.5-5-5 5-2-2L3 18"/></svg><p>Tocá para subir una foto (se optimiza automáticamente)</p>';
     $("#publishErr").textContent = "";
     $("#pubRegion").value = currentVendor.region;
+    $("#pubStock").value = "1";
     $("#pubEndsAt").value = toLocalDatetimeInputValue(new Date(Date.now() + 3 * 86400000));
     $("#publishDialog").showModal();
   }
@@ -1844,7 +1936,7 @@
     var desc = $("#pubDesc").value.trim();
     var isAuction = pubType === "auction";
 
-    var price, floor, increment, endsAtDate;
+    var price, floor, increment, endsAtDate, stock = 1;
     if(isAuction){
       floor = Number($("#pubFloor").value);
       increment = Number($("#pubIncrement").value);
@@ -1852,11 +1944,13 @@
       endsAtDate = endsAtStr ? new Date(endsAtStr) : null;
     } else {
       price = Number($("#pubPrice").value);
+      stock = Number($("#pubStock").value) || 1;
     }
 
     if(title.length < 3){ err.textContent = "Escribe un título para la carta."; return; }
-    if(!pendingBlob){ err.textContent = "Subí una foto de la carta."; return; }
+    if(!pendingPhotos.length){ err.textContent = "Subí al menos una foto de la carta."; return; }
     if(!region){ err.textContent = "Selecciona una región."; return; }
+    if(!isAuction && stock < 1){ err.textContent = "El stock debe ser de al menos 1 unidad."; return; }
     if(isAuction){
       if(!floor || floor < 500){ err.textContent = "Ingresa un precio piso válido en pesos chilenos."; return; }
       if(!increment){ err.textContent = "Selecciona un incremento mínimo."; return; }
@@ -1880,14 +1974,18 @@
     var btn = $("#publishSubmitBtn");
     btn.disabled = true; btn.textContent = "Publicando…";
 
-    var path = currentUser.id + "/" + Date.now() + ".jpg";
-    withTimeout(sb.storage.from(BUCKET).upload(path, pendingBlob, { contentType:"image/jpeg" }).then(function(res){
-      if(res.error) throw res.error;
-      var pub = sb.storage.from(BUCKET).getPublicUrl(path);
-      var photoUrl = pub.data.publicUrl;
+    var uploads = pendingPhotos.map(function(item, i){
+      var path = currentUser.id + "/" + Date.now() + "-" + i + "-" + Math.random().toString(36).slice(2, 7) + ".jpg";
+      return sb.storage.from(BUCKET).upload(path, item.blob, { contentType:"image/jpeg" }).then(function(res){
+        if(res.error) throw res.error;
+        return sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+      });
+    });
+    withTimeout(Promise.all(uploads).then(function(urls){
       var payload = {
         vendor_id: currentUser.id, title: title, sport: sport,
-        region: region, ships: ships, description: desc || null, photo_url: photoUrl, status: "disponible"
+        region: region, ships: ships, description: desc || null,
+        photo_url: urls[0], photos: urls, status: "disponible"
       };
       if(isAuction){
         payload.listing_type = "auction";
@@ -1896,16 +1994,19 @@
         payload.min_increment = increment;
         payload.auction_ends_at = endsAtDate.toISOString();
         payload.bid_count = 0;
+        payload.stock = 1;
       } else {
         payload.listing_type = "fixed";
         payload.price = price;
+        payload.stock = stock;
       }
       return sb.from("listings").insert(payload);
     }).then(function(res){
       if(res && res.error) throw res.error;
       toast(isAuction ? "¡Subasta publicada!" : "¡Carta publicada!");
       $("#publishForm").reset();
-      pendingBlob = null;
+      pendingPhotos = [];
+      renderPubPhotoThumbs();
       $("#publishDialog").close();
       return loadListings();
     }).then(function(){
@@ -2013,24 +2114,18 @@
 
   /* ---------- edit listing ---------- */
   $("#editPhoto").addEventListener("change", function(e){
-    var file = e.target.files && e.target.files[0];
-    if(!file) return;
-    resizeImageToBlob(file).then(function(blob){
-      pendingEditBlob = blob;
-      var url = URL.createObjectURL(blob);
-      $("#editPhotoPreviewWrap").innerHTML = '<img src="'+url+'" alt="Vista previa" />';
-    }).catch(function(){
-      toast("No se pudo procesar esa imagen, prueba con otra foto.");
-    });
+    addFilesToPending(e.target.files, editPhotoItems, renderEditPhotoThumbs);
+    e.target.value = "";
   });
 
   function openEditListingDialog(id){
     var l = getListing(id);
     if(!l || !currentUser || currentUser.id !== l.vendor_id) return;
     editListingId = id;
-    pendingEditBlob = null;
+    var existingPhotos = (l.photos && l.photos.length) ? l.photos : (l.photo_url ? [l.photo_url] : []);
+    editPhotoItems = existingPhotos.map(function(u){ return { existingUrl: u }; });
+    renderEditPhotoThumbs();
     $("#editListingForm").reset();
-    $("#editPhotoPreviewWrap").innerHTML = '<img src="'+esc(l.photo_url)+'" alt="" />';
     $("#editTitle").value = l.title;
     $("#editSport").value = l.sport;
     $("#editRegion").value = l.region;
@@ -2040,6 +2135,7 @@
     $("#editPriceGroup").style.display = isAuction ? "none" : "";
     $("#editAuctionNote").style.display = isAuction ? "" : "none";
     $("#editPrice").value = isAuction ? "" : l.price;
+    $("#editStock").value = isAuction ? "1" : (l.stock || 1);
     $("#editListingErr").textContent = "";
     $("#editListingDialog").showModal();
   }
@@ -2056,39 +2152,42 @@
     var ships = $("#editShips").checked;
     var desc = $("#editDesc").value.trim();
     var isAuction = l.listing_type === "auction";
-    var price;
-    if(!isAuction) price = Number($("#editPrice").value);
+    var price, stock;
+    if(!isAuction){
+      price = Number($("#editPrice").value);
+      stock = Number($("#editStock").value) || 1;
+    }
 
     if(title.length < 3){ err.textContent = "Escribe un título para la carta."; return; }
+    if(!editPhotoItems.length){ err.textContent = "Debe quedar al menos una foto."; return; }
     if(!region){ err.textContent = "Selecciona una región."; return; }
     if(!isAuction && (!price || price < 500)){ err.textContent = "Ingresa un precio válido en pesos chilenos."; return; }
+    if(!isAuction && stock < 1){ err.textContent = "El stock debe ser de al menos 1 unidad."; return; }
 
     var btn = $("#editListingSubmitBtn");
     btn.disabled = true; btn.textContent = "Guardando…";
 
-    var photoStep;
-    if(pendingEditBlob){
-      var path = currentUser.id + "/" + Date.now() + "-edit.jpg";
-      photoStep = sb.storage.from(BUCKET).upload(path, pendingEditBlob, { contentType:"image/jpeg" }).then(function(res){
+    var newItems = editPhotoItems.filter(function(it){ return it.blob; });
+    var uploadSteps = newItems.map(function(item, i){
+      var path = currentUser.id + "/" + Date.now() + "-edit-" + i + "-" + Math.random().toString(36).slice(2, 7) + ".jpg";
+      return sb.storage.from(BUCKET).upload(path, item.blob, { contentType:"image/jpeg" }).then(function(res){
         if(res.error) throw res.error;
-        var pub = sb.storage.from(BUCKET).getPublicUrl(path);
-        return pub.data.publicUrl;
+        item.uploadedUrl = sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
       });
-    } else {
-      photoStep = Promise.resolve(l.photo_url);
-    }
+    });
 
-    withTimeout(photoStep.then(function(photoUrl){
+    withTimeout(Promise.all(uploadSteps).then(function(){
+      var finalUrls = editPhotoItems.map(function(it){ return it.existingUrl || it.uploadedUrl; });
       var payload = {
         title: title, sport: sport, region: region, ships: ships,
-        description: desc || null, photo_url: photoUrl
+        description: desc || null, photo_url: finalUrls[0], photos: finalUrls
       };
-      if(!isAuction) payload.price = price;
+      if(!isAuction){ payload.price = price; payload.stock = stock; }
       return sb.from("listings").update(payload).eq("id", l.id);
     }).then(function(res){
       if(res && res.error) throw res.error;
       toast("Publicación actualizada");
-      pendingEditBlob = null;
+      editPhotoItems = [];
       $("#editListingDialog").close();
       return loadListings();
     }).then(function(){
@@ -2141,8 +2240,10 @@
     var sold = l.status === "vendida";
     $("#detailDialog").dataset.currentId = id;
     $("#detailTitleHead").textContent = l.sport;
-    $("#detailImg").src = l.photo_url;
     $("#detailImg").alt = l.title;
+    detailPhotoList = (l.photos && l.photos.length) ? l.photos : (l.photo_url ? [l.photo_url] : []);
+    detailPhotoIndex = 0;
+    renderDetailPhoto();
     $("#detailSport").textContent = l.sport + (l.ships ? " · Envíos a todo Chile" : "");
     $("#detailTitle").textContent = l.title;
     $("#detailPrice").textContent = formatCLP(l.price);
@@ -2151,6 +2252,7 @@
     var isMine = currentUser && currentUser.id === l.vendor_id;
     var priceLabel = $("#detailPriceLabel");
     if(isAuction){ priceLabel.textContent = l.bid_count>0 ? "Puja actual" : "Precio piso"; priceLabel.style.display = ""; }
+    else if(!sold && l.stock > 1){ priceLabel.textContent = "Stock: " + l.stock + " disponibles"; priceLabel.style.display = ""; }
     else { priceLabel.style.display = "none"; }
     var statusEl = $("#detailStatus");
     if(sold){ statusEl.textContent = "Vendida"; statusEl.style.background = "var(--sold-bg)"; statusEl.style.color = "var(--sold-ink)"; }
@@ -2222,6 +2324,36 @@
     };
     $("#detailDialog").showModal();
   }
+
+  function renderDetailPhoto(){
+    var photos = detailPhotoList;
+    var i = detailPhotoIndex;
+    $("#detailImg").src = photos[i] || "";
+    var multi = photos.length > 1;
+    $("#detailPhotoPrev").style.display = multi ? "" : "none";
+    $("#detailPhotoNext").style.display = multi ? "" : "none";
+    var thumbsWrap = $("#detailPhotoThumbs");
+    if(!multi){ thumbsWrap.innerHTML = ""; return; }
+    thumbsWrap.innerHTML = photos.map(function(url, idx){
+      return '<button type="button" data-i="'+idx+'" class="'+(idx===i?'active':'')+'"><img src="'+esc(url)+'" alt="" /></button>';
+    }).join("");
+    $all("button[data-i]", thumbsWrap).forEach(function(btn){
+      btn.addEventListener("click", function(){
+        detailPhotoIndex = Number(btn.getAttribute("data-i"));
+        renderDetailPhoto();
+      });
+    });
+  }
+  $("#detailPhotoPrev").addEventListener("click", function(){
+    if(!detailPhotoList.length) return;
+    detailPhotoIndex = (detailPhotoIndex - 1 + detailPhotoList.length) % detailPhotoList.length;
+    renderDetailPhoto();
+  });
+  $("#detailPhotoNext").addEventListener("click", function(){
+    if(!detailPhotoList.length) return;
+    detailPhotoIndex = (detailPhotoIndex + 1) % detailPhotoList.length;
+    renderDetailPhoto();
+  });
 
   function renderBidHistory(l, isMine, auctionOver){
     var wrap = $("#bidHistoryList");
