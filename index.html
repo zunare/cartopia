@@ -892,7 +892,7 @@
         <div class="photo-drop" id="photoDrop">
           <div id="photoPreviewWrap">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--ink-faint)"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5.5-5-5 5-2-2L3 18"/></svg>
-            <p id="pubPhotoDropLabel">Tocá para subir fotos (podés elegir varias a la vez)</p>
+            <p id="pubPhotoDropLabel">Toca para subir fotos (puedes elegir varias a la vez)</p>
           </div>
           <input type="file" accept="image/*" id="pubPhoto" multiple />
         </div>
@@ -1117,7 +1117,7 @@
         <div class="photo-drop" id="editPhotoDrop">
           <div id="editPhotoPreviewWrap">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--ink-faint)"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5.5-5-5 5-2-2L3 18"/></svg>
-            <p>Tocá para agregar fotos</p>
+            <p>Toca para agregar fotos</p>
           </div>
           <input type="file" accept="image/*" id="editPhoto" multiple />
         </div>
@@ -1948,7 +1948,7 @@
     }
 
     if(title.length < 3){ err.textContent = "Escribe un título para la carta."; return; }
-    if(!pendingPhotos.length){ err.textContent = "Subí al menos una foto de la carta."; return; }
+    if(!pendingPhotos.length){ err.textContent = "Sube al menos una foto de la carta."; return; }
     if(!region){ err.textContent = "Selecciona una región."; return; }
     if(!isAuction && stock < 1){ err.textContent = "El stock debe ser de al menos 1 unidad."; return; }
     if(isAuction){
